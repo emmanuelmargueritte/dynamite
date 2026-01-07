@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin — Dashboard | Dynamite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- CSS ADMIN COMMUNE -->
+  <link rel="stylesheet" href="/css/admin.css?v=1">
+</head>
+
+<body class="admin">
+
+  <!-- Header admin injecté -->
+  <div id="admin-header"></div>
+
+  <h1>🏠 Dashboard — Administration</h1>
+
+  <section>
+    <p class="muted">
+      Bienvenue dans le back-office Dynamite.
+    </p>
+
+    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:24px;">
+      <a href="/admin/products.html" class="admin-link">
+        🛍️ Gérer les produits
+      </a>
+
+      <a href="/admin/orders.html" class="admin-link">
+        📦 Voir les commandes
+      </a>
+    </div>
+  </section>
+
+  <!-- Loader header + logout -->
+  <script src="/admin/js/admin-layout.js"></script>
+
+</body>
+</html>

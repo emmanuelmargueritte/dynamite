@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dynamite — Du style qui claque.</title>
+  <meta name="description" content="Boutique de vêtements Dynamite à Nouméa. Vente en ligne, livraison Nouméa + Grand Nouméa, click & collect gratuit." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Styles locaux HOME : n’impacte pas shop/product/admin -->
+  <style>
+    /* Conteneur centré (évite l’effet "collé à gauche") */
+    .home-shell{
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .home-hero {
+      position: relative;
+      overflow: hidden;
+      padding: 22px;
+      margin: 14px auto 0;
+      border-radius: var(--radius);
+    }
+    .home-hero::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(900px 380px at 20% 0%, rgba(255,45,85,.18), transparent 55%),
+        radial-gradient(700px 360px at 90% 10%, rgba(47,107,255,.14), transparent 55%);
+      pointer-events:none;
+    }
+    .home-hero > * { position: relative; }
+
+    /* Mise en page desktop : 2 colonnes alignées */
+    .home-hero-top{
+      display: grid;
+      grid-template-columns: 1.25fr 0.85fr;
+      align-items: start;
+      gap: 18px;
+    }
+
+    /* Hero: limite la largeur du bloc texte (desktop) */
+    .home-hero-copy{
+      max-width: 62ch;
+    }
+
+    .home-hero h1{
+      margin: 0 0 10px;
+      font-size: 34px;
+      line-height: 1.05;
+      letter-spacing: .2px;
+      color: var(--text);
+    }
+
+    .home-hero p{
+      margin: 0 0 14px;
+    }
+
+    .home-hero-ctas{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .home-trust{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+
+    .home-kpis{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .home-kpi{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255,255,255,.80);
+      min-width: 160px;
+    }
+    .home-kpi strong{ font-size: 16px; color: var(--text); }
+    .home-kpi span{ font-size: 12px; color: var(--muted); }
+
+    .home-side{
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) - 4px);
+      background: rgba(255,255,255,.78);
+      box-shadow: 0 10px 24px rgba(16,18,35,.06);
+      padding: 14px;
+    }
+
+    /* Header magasin premium */
+    .store-head{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(16,18,35,.08);
+    }
+    .store-head .badge{ flex: 0 0 auto; }
+
+    .home-side .store-name{
+      margin-left: auto;
+      font-weight: 950;
+      font-size: 16px;
+      letter-spacing: .2px;
+      color: var(--text);
+      opacity: .96;
+    }
+    @media (min-width: 900px){
+      .home-side .store-name{ font-size: 18px; }
+    }
+
+    /* Lignes avec icônes (adresse/tél) */
+    .store-line{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      margin-top: 10px;
+    }
+    .store-ico{
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      opacity: .75;
+      flex: 0 0 auto;
+    }
+    .store-line p{ margin: 0; }
+
+    /* Liens adresse/tel (premium) */
+    .home-side .store-address a,
+    .home-side .store-phone a{
+      font-weight: 850;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(16,18,35,.25);
+    }
+    .home-side .store-address a:hover,
+    .home-side .store-phone a:hover{
+      border-bottom-style: solid;
+    }
+
+    /* Home: respiration globale (sans impacter le reste du site) */
+    main > section{
+      margin-top: 18px;
+    }
+    @media (min-width: 900px){
+      main > section{
+        margin-top: 26px;
+      }
+    }
+
+    /* Petits titres: un poil plus premium */
+    main h2{
+      margin: 0 0 10px;
+      letter-spacing: .15px;
+    }
+
+    /* Sections (hors hero) : léger padding */
+    .home-section{
+      padding: 14px 0;
+      position: relative;
+    }
+    @media (min-width: 900px){
+      .home-section{ padding: 18px 0; }
+    }
+
+    /* (1) Trait discret entre sections (uniquement home) */
+    .home-section::before{
+      content:"";
+      position:absolute;
+      left: 0; right: 0;
+      top: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(16,18,35,.10), transparent);
+    }
+
+    /* (2) Hover lift des cards (uniquement home) */
+    .home-section .card{
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    @media (hover:hover){
+      .home-section .card:hover{
+        transform: translateY(-3px);
+        box-shadow: 0 16px 40px rgba(16,18,35,.10);
+      }
+    }
+
+    /* Mobile/tablette : 1 colonne */
+    @media (max-width: 860px){
+      .home-hero-top{ grid-template-columns: 1fr; }
+      .home-hero-copy{ max-width: 100%; }
+    }
+
+    @media (max-width: 560px){
+      .home-hero h1{ font-size: 28px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <!-- HERO -->
+    <section class="home-hero" aria-labelledby="home-hero-title">
+      <div class="home-shell">
+        <div class="home-hero-top">
+          <div class="home-hero-copy">
+            <h1 id="home-hero-title">Dynamite — Du style qui claque.</h1>
+            <p>
+              Des pièces qui claquent et des essentiels faciles à porter.
+              Du street au chic, pour le boulot, la sortie, et le week-end.
+            </p>
+
+            <div class="home-hero-ctas">
+              <a href="shop.html" class="btn">Voir la boutique</a>
+              <a href="#home-selection" class="btn secondary">Découvrir la sélection</a>
+              <a href="cart.html" class="btn secondary">Voir mon panier</a>
+            </div>
+
+            <div class="home-trust" aria-label="Bandeau confiance">
+              <span class="badge">Click &amp; Collect gratuit</span>
+              <span class="badge">Livraison Nouméa + Grand Nouméa</span>
+              <span class="badge">Paiement sécurisé Stripe</span>
+              <span class="badge" id="home-currency">Prix en XPF</span>
+            </div>
+
+            <div class="home-kpis" aria-label="Points forts">
+              <div class="home-kpi">
+                <strong>Street &amp; chic</strong>
+                <span>Un mix facile à assortir</span>
+              </div>
+              <div class="home-kpi">
+                <strong>Nouveautés</strong>
+                <span>Arrivages réguliers</span>
+              </div>
+              <div class="home-kpi">
+                <strong>Essentiels</strong>
+                <span>Basics + pièces fortes</span>
+              </div>
+            </div>
+          </div>
+
+          <aside class="home-side" aria-label="Infos magasin">
+            <div class="store-head">
+              <span class="badge">Le magasin</span>
+              <span class="store-name" id="home-store-name">Dynamite</span>
+            </div>
+
+            <div class="store-line store-address">
+              <!-- Pin -->
+              <svg class="store-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"></path>
+                <circle cx="12" cy="10" r="2.5"></circle>
+              </svg>
+
+              <p>
+                <strong>Adresse :</strong>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=42%20Rue%20Georges%20CLEMENCEAU%2C%2098800%20Noum%C3%A9a"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  42 Rue Georges CLEMENCEAU 98800 Nouméa
+                </a>
+              </p>
+            </div>
+
+            <div class="store-line store-phone">
+              <!-- Phone -->
+              <svg class="store-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8.1 9.6a16 16 0 0 0 6.3 6.3l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2z"></path>
+              </svg>
+
+              <p>
+                <strong>Tél :</strong>
+                <a href="tel:010203">01.02.03</a>
+              </p>
+            </div>
+
+            <div class="home-trust" style="margin-top:10px;">
+              <span class="badge">Click &amp; Collect gratuit</span>
+              <span class="badge">Livraison Nouméa + Grand Nouméa</span>
+              <span class="badge">Paiement sécurisé</span>
+            </div>
+
+            <p class="small" style="margin:10px 0 0;">
+              Street ou chic ? Commence par une catégorie et construis ton look.
+            </p>
+
+            <div class="home-hero-ctas" style="margin-top:10px;">
+              <a class="btn" href="shop.html">Trouver mon style</a>
+              <a class="btn secondary" href="shop.html?sort=new">Nouveautés</a>
+              <a
+                class="btn secondary"
+                href="https://www.google.com/maps/dir/?api=1&destination=42%20Rue%20Georges%20CLEMENCEAU%2C%2098800%20Noum%C3%A9a"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Itinéraire
+              </a>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="home-section" aria-labelledby="home-cats-title">
+      <div class="home-shell">
+        <div class="row" style="align-items:center;">
+          <h2 id="home-cats-title">Catégories</h2>
+          <a class="small" href="shop.html" style="font-weight:800;">Tout voir →</a>
+        </div>
+
+        <!-- Réutilise ton composant shop-cats -->
+        <div class="shop-cats" style="position:relative; top:auto;">
+          <div class="shop-cats-row" id="home-cats-row" aria-label="Navigation catégories">
+            <a class="shop-cat is-active" href="shop.html?cat=all">Tous</a>
+            <!-- rempli en JS -->
+          </div>
+          <div class="cat-hint" aria-hidden="true">
+            <span class="cat-hint-ico">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 12h10"></path>
+                <path d="M12 7l5 5-5 5"></path>
+                <path d="M12 7l-5 5 5 5"></path>
+              </svg>
+            </span>
+            <span>Swipe</span>
+          </div>
+        </div>
+
+        <p class="small" style="margin:0;">
+          Clique une catégorie pour arriver directement filtré sur la boutique.
+        </p>
+      </div>
+    </section>
+
+    <!-- SELECTION -->
+    <section class="home-section" id="home-selection" aria-labelledby="home-selection-title">
+      <div class="home-shell">
+        <div class="row" style="align-items:center;">
+          <h2 id="home-selection-title">Sélection du moment</h2>
+          <a class="small" href="shop.html" style="font-weight:800;">Explorer →</a>
+        </div>
+
+        <p id="home-loading" class="small" aria-live="polite">Chargement…</p>
+        <p id="home-error" class="small" style="display:none;color:#c62828;" role="alert"></p>
+        <div id="home-products" class="grid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- USP -->
+    <section class="home-section" aria-labelledby="home-usp-title">
+      <div class="home-shell">
+        <h2 id="home-usp-title">La sélection Dynamite</h2>
+
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+          <article class="card" style="min-height:auto;">
+            <div class="content">
+              <div class="badge">Style</div>
+              <div class="title">Silhouettes actuelles</div>
+              <div class="meta">Des pièces faciles à porter, du casual au plus habillé.</div>
+            </div>
+          </article>
+
+          <article class="card" style="min-height:auto;">
+            <div class="content">
+              <div class="badge">Mix &amp; match</div>
+              <div class="title">Looks sans prise de tête</div>
+              <div class="meta">Associe facilement : couleurs, tailles et variations visibles tout de suite.</div>
+            </div>
+          </article>
+
+          <article class="card" style="min-height:auto;">
+            <div class="content">
+              <div class="badge">Service</div>
+              <div class="title">Simple au quotidien</div>
+              <div class="meta">Click &amp; collect gratuit + livraison Nouméa &amp; Grand Nouméa.</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <nav aria-label="Navigation légale">
+      <a href="cgv.html">CGV</a>
+      <a href="mentions-legales.html">Mentions légales</a>
+      <a href="politique-confidentialite.html">Confidentialité</a>
+      <a href="politique-cookies.html">Cookies</a>
+    </nav>
+    <p>© Dynamite</p>
+  </footer>
+
+  <!-- Helpers (si déjà présents dans ton projet) -->
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="/js/cloudinary.js"></script>
+
+  <!-- Home loader -->
+  <script src="js/index.js"></script>
+
+  <script src="js/cookies.js"></script>
+  <script src="/js/site-header.js"></script>
+
+
+</body>
+</html>

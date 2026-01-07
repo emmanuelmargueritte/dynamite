@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Boutique — Dynamite</title>
+  <meta name="description" content="Découvrez tous les vêtements Dynamite disponibles en ligne." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- SEO -->
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="/shop.html" />
+
+  <!-- Open Graph / Twitter (Shop) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Dynamite" />
+  <meta property="og:title" content="Boutique — Dynamite" />
+  <meta property="og:description" content="Découvrez tous les vêtements Dynamite disponibles en ligne." />
+  <meta property="og:url" content="/shop.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Boutique — Dynamite" />
+  <meta name="twitter:description" content="Découvrez tous les vêtements Dynamite disponibles en ligne." />
+
+  <!-- Perf: Cloudinary -->
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+  <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+
+  <!-- JSON-LD placeholder (visible dans View Source, rempli en JS) -->
+  <script type="application/ld+json" id="shop-jsonld"></script>
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<div id="site-header"></div>
+
+<main>
+  <section aria-labelledby="liste-produits">
+    <h2 id="liste-produits">Nos produits</h2>
+
+    <!-- ✅ BARRE CATEGORIES -->
+    <div id="shop-categories" class="shop-cats" aria-label="Filtres boutique">
+      <div class="shop-cats-row">
+        <button type="button" class="shop-cat is-active" data-cat="all" aria-pressed="true">Tous</button>
+        <!-- rempli en JS -->
+      </div>
+
+      <div class="cat-hint" aria-hidden="true">
+        <span class="cat-hint-ico">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 12h10"></path>
+            <path d="M12 7l5 5-5 5"></path>
+            <path d="M12 7l-5 5 5 5"></path>
+          </svg>
+        </span>
+        <span>Swipe</span>
+      </div>
+    </div>
+
+    <!-- ✅ NEW: BARRE MOBILE (recherche rapide + filtres) -->
+    <div class="shop-mobilebar" aria-label="Recherche rapide">
+      <input id="shop-search-mobile" type="search" placeholder="Rechercher…" autocomplete="off" />
+      <button id="shop-mobile-clear" class="btn secondary" type="button" aria-label="Effacer">×</button>
+      <button id="shop-mobile-filters" class="btn secondary" type="button">Filtres</button>
+    </div>
+
+    <!-- ✅ Desktop tools (et aussi déplacé dans drawer en mobile) -->
+    <div class="shop-tools" role="search" aria-label="Recherche et tri">
+      <div class="shop-tools-left">
+        <label class="shop-tools-label" for="shop-search">Rechercher</label>
+        <input
+          id="shop-search"
+          type="search"
+          placeholder="Nom / description…"
+          autocomplete="off"
+        />
+        <button id="shop-search-clear" class="btn secondary" type="button" aria-label="Effacer la recherche">×</button>
+      </div>
+
+      <div class="shop-tools-right">
+        <label class="shop-tools-label" for="shop-sort">Trier</label>
+        <select id="shop-sort">
+          <option value="new" selected>Nouveautés</option>
+          <option value="price_asc">Prix ↑</option>
+          <option value="price_desc">Prix ↓</option>
+          <option value="name_asc">Nom A→Z</option>
+        </select>
+
+        <button id="shop-filters-open" class="btn secondary shop-filters-open" type="button">Filtres</button>
+      </div>
+
+      <div class="shop-results small">
+        <span id="shop-cat-current">Tous</span>
+        <span id="shop-results-count"></span>
+        <span id="shop-cat-hint" class="muted">
+          <span id="shop-cat-note" class="shop-cat-note" aria-live="polite"></span>
+        </span>
+      </div>
+    </div>
+
+    <div id="shop-active-chips" class="shop-chips" aria-label="Filtres actifs"></div>
+
+    <p id="shop-loading" class="small" aria-live="polite">Chargement…</p>
+    <p id="shop-error" class="small" style="display:none;color:#c62828;" role="alert"></p>
+
+    <div id="products" class="grid" aria-live="polite"></div>
+  </section>
+</main>
+
+<!-- Drawer filtres mobile -->
+<div id="shop-filters-overlay" class="modal-overlay" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <strong>Filtres</strong>
+      <button id="shop-filters-close" class="btn secondary" type="button">Fermer</button>
+    </div>
+    <div id="shop-filters-body" class="modal-body"></div>
+    <div class="modal-foot">
+      <button id="shop-filters-reset" class="btn secondary" type="button">Réinitialiser</button>
+      <button id="shop-filters-apply" class="btn" type="button">Appliquer</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <nav class="legal-links" aria-label="Navigation légale">
+    <a href="cgv.html">CGV</a>
+    <a href="mentions-legales.html">Mentions légales</a>
+    <a href="politique-confidentialite.html">Confidentialité</a>
+    <a href="politique-cookies.html">Cookies</a>
+  </nav>
+  <p>© Dynamite</p>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="/js/cloudinary.js"></script>
+<script src="js/shop.js"></script>
+<script src="js/cookies.js"></script>
+<script src="/js/site-header.js"></script>
+</body>
+</html>

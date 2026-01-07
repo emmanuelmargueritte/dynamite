@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin — Apparence</title>
+  <link rel="stylesheet" href="/css/admin.css?v=1">
+</head>
+
+<body class="admin">
+  <div id="admin-header"></div>
+
+  <h1>🎨 Apparence</h1>
+
+  <form id="appearance-form" class="admin-form" style="max-width:780px;">
+    <h2 style="margin-top:0;">Couleurs</h2>
+
+    <label class="muted" for="accent">Couleur accent</label>
+    <input id="accent" placeholder="#ff2d55" />
+
+    <label class="muted" for="background">Fond</label>
+    <input id="background" placeholder="#ffffff" />
+
+    <label class="muted" for="text">Texte</label>
+    <input id="text" placeholder="#101223" />
+
+    <h2>Logo & Texte</h2>
+
+    <label class="muted" for="logo_url">Logo (URL)</label>
+    <input id="logo_url" placeholder="https://..." />
+    <small class="muted help-right">Optionnel. Tu peux coller une URL Cloudinary.</small>
+
+    <label class="muted" for="store_name">Nom affiché</label>
+    <input id="store_name" placeholder="Dynamite" />
+
+    <h2>CTA</h2>
+
+    <label class="muted" for="cta_text">Texte bouton principal</label>
+    <input id="cta_text" placeholder="Voir la boutique" />
+
+    <label class="muted" for="cta_href">Lien bouton principal</label>
+    <input id="cta_href" placeholder="shop.html" />
+
+    <div class="row" style="gap:10px; margin-top:14px;">
+      <button type="submit">Enregistrer</button>
+      <button type="button" id="btn-reset" class="secondary">Réinitialiser</button>
+      <span id="msg" class="muted" style="margin-left:auto;"></span>
+    </div>
+
+    <div style="margin-top:14px;">
+      <div class="muted" style="margin-bottom:6px;">Aperçu (mini)</div>
+      <div id="preview" class="card" style="min-height:auto;">
+        <div class="content">
+          <div class="badge">Aperçu</div>
+          <div class="title">Dynamite</div>
+          <div class="meta">Accent / fond / texte (variables CSS)</div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <script src="/admin/js/admin-layout.js"></script>
+  <script src="/admin/js/appearance.js"></script>
+</body>
+</html>

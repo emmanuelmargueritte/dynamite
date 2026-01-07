@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin — Commandes | Dynamite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/admin.css?v=1">
+</head>
+
+<body class="admin">
+
+  <div id="admin-header"></div>
+
+  <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+    <div>
+      <h1 style="margin:0;">📦 Commandes</h1>
+      <p class="muted" style="margin:6px 0 0;">
+  Clic sur une ligne = aperçu · / focus recherche · Entrée chercher · Échap reset · d/m tri · Alt+←/→ pages
+  · <a class="admin-link" href="/admin/orders-help.html">Aide</a>
+</p>
+
+    </div>
+
+    <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+      <label class="muted" style="display:flex; flex-direction:column; gap:6px;">
+        Recherche
+        <input id="q" placeholder="id, session_id, stripe…" list="qSuggestions" autocomplete="off" />
+        <datalist id="qSuggestions"></datalist>
+      </label>
+
+      <label class="muted" for="statusFilter" style="display:flex; flex-direction:column; gap:6px;">
+        Statut
+        <select id="statusFilter">
+          <option value="">Tous</option>
+          <option value="paid">PAID</option>
+          <option value="pending">PENDING</option>
+        </select>
+      </label>
+
+      <button id="exportCsv" type="button">⬇️ Export CSV</button>
+    </div>
+  </div>
+
+  <div class="table-scroll" style="margin-top:16px;">
+  <table class="admin-table orders-table">
+    <thead>
+      <tr>
+        <th class="th-sort" data-sort="created_at">Date <span id="sortDate" class="sort-ind">↕</span></th>
+        <th>Articles</th>
+        <th>Quantité</th>
+        <th class="th-sort" data-sort="amount_xpf">Montant <span id="sortAmount" class="sort-ind">↕</span></th>
+        <th>Statut</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody id="orders">
+      <tr><td colspan="6">Chargement des commandes…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+  <div class="pager">
+    <div class="pager-inner">
+      <button id="prevPage" type="button">←</button>
+      <span id="pageInfo" class="muted">Page 1</span>
+      <button id="nextPage" type="button">→</button>
+    </div>
+  </div>
+
+  <!-- ✅ Aperçu (modal) -->
+  <div id="previewOverlay" class="modal-overlay hidden" aria-hidden="true"></div>
+
+  <aside id="previewPanel" class="modal-panel hidden" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
+    <div class="modal-head">
+      <div>
+        <div id="previewTitle" class="modal-title">Aperçu commande</div>
+        <div id="previewMeta" class="muted" style="margin-top:4px;">—</div>
+      </div>
+
+      <button id="previewClose" type="button" class="admin-link btn-link">✕</button>
+    </div>
+
+    <div id="previewActions" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;"></div>
+
+    <div class="modal-body">
+      <table class="admin-table" style="margin-top:12px;">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Produit</th>
+            <th>Qté</th>
+            <th>PU</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="previewItems">
+          <tr><td colspan="5" class="muted">Sélectionne une commande…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </aside>
+
+  <script src="/admin/js/admin-orders.js"></script>
+  <script src="/admin/js/admin-layout.js"></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panier — Dynamite</title>
+  <meta name="description" content="Votre panier Dynamite." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<div id="site-header"></div>
+
+<main>
+  <section>
+    <h2>Vos articles</h2>
+
+    <!-- ✅ Contenu du panier -->
+    <!-- (ancien: cart-items) -->
+    <div id="items" aria-live="polite"></div>
+
+    <!-- ✅ Total -->
+    <!-- (ancien: cart-total) -->
+    <div id="total" style="margin-top:12px;font-weight:bold;"></div>
+
+    <hr />
+
+    <h2>Livraison</h2>
+    <label for="delivery-method">Mode de livraison</label>
+    <select id="delivery-method" aria-label="Mode de livraison">
+      <option value="CLICK_COLLECT">Click & Collect (gratuit)</option>
+      <option value="DELIVERY">Livraison Nouméa + Grand Nouméa</option>
+    </select>
+
+    <div style="margin-top: 14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <!-- ✅ Checkout -->
+      <!-- (ancien: checkout-btn) -->
+      <button id="checkout" type="button" class="btn primary">
+        Passer au paiement
+      </button>
+
+      <!-- ✅ Vider panier (utilisé par cart.js) -->
+      <button id="clear" type="button" class="btn secondary">
+        Vider le panier
+      </button>
+
+      <a class="btn secondary" href="shop.html">
+        Continuer mes achats
+      </a>
+    </div>
+
+    <p class="small" style="margin-top: 14px;">
+      Le paiement est sécurisé via Stripe. Le stock est confirmé après paiement.
+    </p>
+  </section>
+</main>
+
+<footer>
+  <nav aria-label="Navigation légale">
+    <a href="cgv.html">CGV</a>
+    <a href="mentions-legales.html">Mentions légales</a>
+    <a href="politique-confidentialite.html">Confidentialité</a>
+    <a href="politique-cookies.html">Cookies</a>
+  </nav>
+  <p>© Dynamite</p>
+</footer>
+
+<!-- Scripts -->
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="/js/cloudinary.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/cart-premium.js?v=1"></script>
+
+<script src="/js/site-header.js"></script>
+
+
+<!-- ⛔ checkout.js volontairement INACTIF pour l’instant -->
+<!-- <script src="js/checkout.js"></script> -->
+</body>
+</html>

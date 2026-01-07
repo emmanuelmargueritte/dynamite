@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Commande confirmée — Dynamite</title>
+  <meta name="description" content="Confirmation de votre commande Dynamite." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<header>
+  <h1>Commande</h1>
+  <nav>
+    <a href="shop.html">Boutique</a>
+    <a href="index.html">Accueil</a>
+  </nav>
+</header>
+
+<main>
+  <section>
+    <h2>Merci pour votre commande</h2>
+    <div id="order-summary" aria-live="polite"></div>
+    <div style="margin-top: 14px;">
+      <a href="shop.html" class="btn">Retour à la boutique</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <nav aria-label="Navigation légale">
+    <a href="cgv.html">CGV</a>
+    <a href="mentions-legales.html">Mentions légales</a>
+    <a href="politique-confidentialite.html">Confidentialité</a>
+    <a href="politique-cookies.html">Cookies</a>
+  </nav>
+  <p>© Dynamite</p>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/cookies.js"></script>
+<script>
+(async () => {
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('orderId');
+  const host = document.getElementById('order-summary');
+
+  if (!orderId) {
+    host.appendChild(Ui.notice("warn", "Aucun identifiant de commande fourni."));
+    return;
+  }
+
+  try {
+    const data = await Api.request(`/api/orders/${encodeURIComponent(orderId)}`);
+    const o = data.order;
+    const items = Array.isArray(o.items) ? o.items : [];
+
+    const table = document.createElement("table");
+    table.className = "table";
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Variante</th>
+          <th>Quantité</th>
+          <th>Prix unitaire</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${items.map(i => `
+          <tr>
+            <td>${i.variant_id}</td>
+            <td>${i.quantity}</td>
+            <td>${Ui.xpf(i.unit_price_xpf)}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    `;
+
+    host.appendChild(Ui.el("div", { class: "notice ok" }, [
+      `Commande n° ${o.id} — Total : ${Ui.xpf(o.total_xpf)}`
+    ]));
+
+    host.appendChild(Ui.el("div", { class: "notice warn" }, [
+      `Mode : ${o.delivery_method === "CLICK_COLLECT" ? "Click & Collect (gratuit)" : "Livraison"}`
+    ]));
+
+    host.appendChild(Ui.el("div", { class: "notice warn" }, [
+      `Statut : ${o.status}`
+    ]));
+
+    if (o.invoice_number) {
+      host.appendChild(Ui.el("div", { class: "notice warn" }, [
+        `Facture : ${o.invoice_number}`
+      ]));
+    }
+
+    host.appendChild(Ui.el("h2", {}, ["Détail"]));
+    host.appendChild(table);
+
+  } catch (e) {
+    host.appendChild(Ui.notice("err", e.message || "Erreur de chargement de commande."));
+  }
+})();
+</script>
+
+
+</body>
+</html>

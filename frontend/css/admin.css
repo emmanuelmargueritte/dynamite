@@ -1,0 +1,401 @@
+/* =========================
+   ADMIN BASE
+   ========================= */
+body.admin {
+  font-family: Arial, sans-serif;
+  background: #f5f6f8;
+  margin: 0;
+  padding: 40px;
+  color: #222;
+}
+
+h1 { margin-bottom: 24px; }
+
+/* Empêche scroll horizontal / "traits" */
+html, body { overflow-x: hidden; }
+
+/* =========================
+   HEADER ADMIN
+   ========================= */
+.admin-header { margin-bottom: 32px; }
+
+.admin-nav {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-link {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  color: #222;
+}
+
+.admin-link:hover { background: #f0f0f0; }
+
+.admin-link.danger {
+  color: #c62828;
+  border-color: #e0b4b4;
+}
+
+/* Rendre les <button> comme les <a> si besoin */
+.btn-link {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+/* =========================
+   TABLES ADMIN
+   ========================= */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  font-size: 14px;
+}
+
+.admin-table th {
+  background: #fafafa;
+  font-weight: bold;
+}
+
+.admin-table tr:hover { background: #f9f9f9; }
+
+/* =========================
+   TRI
+   ========================= */
+.th-sort { cursor: pointer; user-select: none; }
+.sort-ind { display: inline-block; margin-left: 6px; opacity: 0.7; }
+
+/* =========================
+   STATUTS
+   ========================= */
+.status-active { color: #2e7d32; font-weight: bold; }
+.status-inactive { color: #ef6c00; font-weight: bold; }
+
+/* =========================
+   UTILITAIRES
+   ========================= */
+.muted { color: #777; font-size: 12px; }
+.error { color: #c62828; }
+
+.hidden { display: none !important; }
+
+/* =========================
+   PAGINATION (sticky bas)
+   ========================= */
+.pager {
+  position: sticky;
+  bottom: 16px;
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+  z-index: 10;
+}
+
+.pager-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  padding: 8px 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+/* =========================
+   FORMULAIRES ADMIN (base)
+   ========================= */
+.admin-form {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 10px 14px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea { width: 100%; }
+
+.admin-form label.muted,
+.admin-form .muted[for] {
+  margin: 0;
+  justify-self: start;
+}
+
+.admin-form small.muted {
+  grid-column: 2 / 3;
+  margin-top: -4px;
+}
+
+.admin-form h3,
+.admin-form hr { grid-column: 1 / -1; }
+
+.admin-form .sizes-wrap {
+  grid-column: 2 / 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  align-items: center;
+}
+
+.admin-form .stock-toggle {
+  grid-column: 2 / 3;
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+}
+
+#stock-box { grid-column: 2 / 3; }
+
+.admin-form button[type="submit"] {
+  grid-column: 2 / 3;
+  justify-self: start;
+  margin-top: 6px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* =========================
+   PRODUITS: form compact gauche/droite
+   ========================= */
+.admin-form.product-form {
+  max-width: 980px;
+  width: 100%;
+  margin-bottom: 24px;
+
+  display: grid;
+  grid-template-columns: 150px minmax(280px, 1fr) 150px minmax(280px, 1fr);
+  gap: 10px 14px;
+  align-items: center;
+}
+
+.admin-form.product-form input,
+.admin-form.product-form select,
+.admin-form.product-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-form.product-form .help-right { grid-column: 4 / 5; margin-top: -6px; }
+.admin-form.product-form .sizes-wrap { grid-column: 4 / 5; }
+.admin-form.product-form .sizes-help { grid-column: 4 / 5; margin-top: -6px; }
+.admin-form.product-form #stock-box { grid-column: 3 / 5; }
+
+.admin-form.product-form button[type="submit"] {
+  grid-column: 2 / 3;
+  justify-self: start;
+}
+
+/* =========================
+   BARRE RECHERCHE
+   ========================= */
+.admin-toolbar {
+  max-width: 1100px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 8px 0 16px;
+}
+
+.admin-search {
+  flex: 1;
+  min-width: 240px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+/* =========================
+   MODAL PREVIEW (si tu l'utilises)
+   ========================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1000;
+}
+
+.modal-panel {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  bottom: 14px;
+  width: min(720px, calc(100vw - 28px));
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 70px rgba(0,0,0,0.25);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+}
+
+.modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.modal-title { font-weight: 700; font-size: 18px; }
+.modal-body { overflow: auto; margin-top: 10px; padding-right: 4px; }
+
+.preview-thumb {
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+body.modal-open { overflow: hidden; }
+
+tr.row-preview { cursor: pointer; }
+tr.row-preview td:last-child { cursor: default; }
+tr.row-preview:hover { background: rgba(0,0,0,0.03); }
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 860px) {
+  .admin-form.product-form {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+  .admin-form.product-form .help-right,
+  .admin-form.product-form .sizes-wrap,
+  .admin-form.product-form .sizes-help,
+  .admin-form.product-form #stock-box,
+  .admin-form.product-form button[type="submit"] {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-form {
+    grid-template-columns: 1fr;
+  }
+  .admin-form small.muted,
+  .admin-form button[type="submit"],
+  #stock-box,
+  .admin-form .sizes-wrap,
+  .admin-form .stock-toggle {
+    grid-column: 1 / -1;
+  }
+}
+/* =========================
+   ✅ TABLE STABLE (ne bouge plus au tri)
+   ========================= */
+.products-table { min-width: 980px; }
+
+.products-table { table-layout: fixed; width: 100%; }
+
+.admin-table th, .admin-table td {
+  vertical-align: middle;
+}
+
+/* Réserve une place fixe pour ▲/▼ */
+.sort-ind {
+  display: inline-block;
+  width: 14px;
+  text-align: center;
+}
+
+/* Largeurs fixes par colonne (Produits uniquement) */
+.products-table th:nth-child(1), .products-table td:nth-child(1) { width: 86px; }   /* Image */
+.products-table th:nth-child(2), .products-table td:nth-child(2) { width: 32%; }   /* Nom */
+.products-table th:nth-child(3), .products-table td:nth-child(3) { width: 120px; } /* Prix */
+.products-table th:nth-child(4), .products-table td:nth-child(4) { width: 120px; } /* Statut */
+.products-table th:nth-child(5), .products-table td:nth-child(5) { width: 140px; } /* Date */
+.products-table th:nth-child(6), .products-table td:nth-child(6) { width: 360px; } /* Actions */
+
+/* Ellipsis (Produits uniquement) */
+.products-table td:nth-child(2) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =========================
+   ✅ ALIGN STOCK TOGGLE (products.html)
+   ========================= */
+.admin-form.product-form .stock-toggle{
+  grid-column: 4 / 5;           /* colonne droite */
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  justify-self: start;
+}
+.admin-form.product-form .stock-toggle input[type="checkbox"]{
+  margin: 0;
+}
+/* =========================
+   ✅ TABLE SCROLL (admin)
+   ========================= */
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ✅ Orders: mobile/tablette => cacher colonnes secondaires
+   1: Date | 2: Articles | 3: Quantité | 4: Montant | 5: Statut | 6: Action
+*/
+@media (max-width: 720px) {
+  .orders-table th:nth-child(2),
+  .orders-table td:nth-child(2),
+  .orders-table th:nth-child(3),
+  .orders-table td:nth-child(3) {
+    display: none;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    white-space: nowrap;
+  }
+}
+/* ✅ FIX: scroll horizontal réellement utilisable (Produits) */
+.table-scroll{
+  overflow-x: auto;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 10px; /* évite le “trait” inutilisable */
+}
+
+.products-table{
+  min-width: 1100px !important; /* force un vrai dépassement => scroll */
+}
+
+/* ✅ Produits : laisser de la place au scroll sous le tableau (évite recouvrement par .pager sticky) */
+.table-scroll.has-pager{
+  padding-bottom: 14px;
+  margin-bottom: 90px;
+}
+
+

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin — Détail commande | Dynamite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/admin.css?v=1">
+</head>
+
+<body class="admin">
+
+  <div id="admin-header"></div>
+
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+    <h1 style="margin:0;">📦 Détail commande</h1>
+    <a class="admin-link" href="/admin/orders.html">← Retour</a>
+  </div>
+
+  <p id="orderMeta" class="muted" style="margin-top:12px;">Chargement…</p>
+
+  <div id="orderCopyBar" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;"></div>
+
+  <table class="admin-table" style="margin-top:16px;">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Produit</th>
+        <th>Quantité</th>
+        <th>Prix unitaire</th>
+        <th>Total ligne</th>
+      </tr>
+    </thead>
+    <tbody id="orderItems">
+      <tr><td colspan="5">Chargement…</td></tr>
+    </tbody>
+  </table>
+
+  <script src="/admin/js/order.js"></script>
+  <script src="/admin/js/admin-layout.js"></script>
+</body>
+</html>

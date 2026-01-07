@@ -1,0 +1,18 @@
+# Variables d'environnement
+backend/.env
+
+# Dépendances
+node_modules/
+
+# Logs
+*.log
+
+stripe.exe
+test-env.js
+
+# DB dumps / backups
+*.dump
+*.sql
+backups/
+
+backend/.env à conserver

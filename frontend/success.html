@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Commande confirmée — Dynamite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ✅ CSS global (header injecté + thème) -->
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <style>
+    /* ✅ On garde juste le layout de la page */
+    .container {
+      max-width: 640px;
+      margin: 80px auto;
+      background: #fff;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+
+    h1 {
+      color: #1f9d6a;
+      margin-top: 0;
+    }
+
+    .summary {
+      margin-top: 24px;
+      border-top: 1px solid #eee;
+      padding-top: 24px;
+    }
+
+    .row { margin-bottom: 12px; }
+
+    .label {
+      font-weight: bold;
+      display: block;
+      color: #555;
+    }
+
+    .value { font-size: 1.05em; }
+
+    .actions { margin-top: 32px; text-align: center; }
+
+    /* ✅ Utilise le style .btn global plutôt que ton bouton noir */
+    .actions .btn { text-decoration: none; }
+
+    .error { color: #c62828; }
+  </style>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="container">
+    <h1>✅ Merci pour votre achat</h1>
+
+    <p>Votre commande a bien été enregistrée et le paiement a été confirmé.</p>
+
+    <div id="content">
+      <p>Chargement du récapitulatif de votre commande…</p>
+    </div>
+
+    <div class="actions">
+      <a href="/shop.html" class="btn">Retour à la boutique</a>
+    </div>
+  </div>
+
+  <script src="/js/site-header.js"></script>
+  <script src="js/success.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="48" viewBox="0 0 220 48" role="img" aria-label="Dynamite">
+  <rect x="0" y="0" width="220" height="48" rx="12" fill="#111"/>
+  <text x="18" y="31" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#fff" letter-spacing="1">
+    DYNAMITE
+  </text>
+  <circle cx="196" cy="24" r="8" fill="#fff"/>
+  <circle cx="196" cy="24" r="4" fill="#111"/>
+</svg>

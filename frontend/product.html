@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+<script type="application/ld+json" id="pdp-jsonld"></script>
+
+  <!-- Fallback (sera remplacé dynamiquement par product.js si SEO fields dispo) -->
+  <title>Produit — Dynamite</title>
+  <meta name="description" content="Détail produit Dynamite." />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="index,follow" />
+
+  <!-- Canonical fallback (product.js peut le remplacer en /p/slug-id) -->
+  <link rel="canonical" href="/" />
+
+  <!-- Perf: preconnect (Cloudinary) -->
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+
+  <link rel="stylesheet" href="/css/styles.css" />
+
+  <style>
+    /* 3 blocs sur desktop, stack sur mobile */
+    .pdp-grid { display:grid; gap:14px; grid-template-columns: 1fr; }
+    @media (min-width: 980px){ .pdp-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+    /* Petit polish: évite écran “vide” pendant le fetch */
+    #product:empty{
+      min-height: 55vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 24px 0;
+    }
+    #product:empty::before{
+      content:"Chargement du produit…";
+      font-size: 14px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <article id="product" aria-live="polite"></article>
+  </main>
+
+  <footer>
+    <nav aria-label="Navigation légale">
+      <a href="/cgv.html">CGV</a>
+      <a href="/mentions-legales.html">Mentions légales</a>
+      <a href="/politique-confidentialite.html">Confidentialité</a>
+      <a href="/politique-cookies.html">Cookies</a>
+    </nav>
+    <p>© Dynamite</p>
+  </footer>
+
+  <!-- Scripts en defer = rendu plus rapide, et ordre conservé -->
+  <script src="/js/api.js" defer></script>
+  <script src="/js/ui.js" defer></script>
+  <script src="/js/cloudinary.js" defer></script>
+  <script src="/js/product.js" defer></script>
+  <script src="/js/cookies.js" defer></script>
+  <script src="/js/site-header.js" defer></script>
+
+
+</body>
+</html>

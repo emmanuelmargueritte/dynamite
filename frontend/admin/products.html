@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin — Produits</title>
+  <link rel="stylesheet" href="/css/admin.css?v=1">
+</head>
+
+<body class="admin">
+  <div id="admin-header"></div>
+
+  <h1>🛍️ Produits</h1>
+
+  <form id="product-form" class="admin-form product-form">
+
+    <!-- Row 1 -->
+    <label class="muted" for="name">Nom</label>
+    <input id="name" placeholder="Nom" required />
+
+    <label class="muted" for="gender">Genre</label>
+    <select id="gender">
+      <option value="UNISEXE" selected>Unisexe</option>
+      <option value="HOMME">Homme</option>
+      <option value="FEMME">Femme</option>
+    </select>
+
+    <!-- Row 2 -->
+    <label class="muted" for="description">Description courte</label>
+    <input id="description" placeholder="Description (listing / résumé)" />
+
+    <label class="muted" for="colors">Couleurs disponibles</label>
+    <input id="colors" placeholder="Ex: Noir, Blanc, Rouge (facultatif)" />
+    <small class="muted help-right">
+      Laisse vide → DEFAULT • Si tu laisses vide, on ne crée pas de variantes (le produit est créé quand même).
+    </small>
+
+    <!-- Row 3 -->
+    <label class="muted" for="price_xpf">Prix XPF</label>
+    <input id="price_xpf" type="number" placeholder="Prix XPF" required />
+
+    <label class="muted">Tailles disponibles</label>
+    <div class="sizes-wrap">
+      <label><input type="checkbox" class="size" value="S"> S</label>
+      <label><input type="checkbox" class="size" value="M" checked> M</label>
+      <label><input type="checkbox" class="size" value="L"> L</label>
+      <label><input type="checkbox" class="size" value="XL"> XL</label>
+      <label><input type="checkbox" class="size" value="XXL"> XXL</label>
+    </div>
+    <small class="muted sizes-help">Si aucune cochée → M</small>
+
+    <!-- Row 4 -->
+    <label class="muted" for="stripe_price_id">Stripe price_id</label>
+    <input id="stripe_price_id" placeholder="Stripe price_id" required />
+
+    <label class="muted">Stock (optionnel)</label>
+    <label class="stock-toggle">
+      <input type="checkbox" id="track_stock" />
+      Suivre le stock
+    </label>
+
+    <!-- Row 5 -->
+    <label class="muted" for="image">Image produit</label>
+    <input type="file" id="image" accept="image/*" />
+    <small class="muted">Image produit (upload Cloudinary)</small>
+
+    <div id="stock-box" style="display:none;">
+      <label class="muted" for="stock_total">Stock total</label>
+      <input id="stock_total" type="number" min="0" placeholder="Stock total (ex: 12)" />
+      <small class="muted">Laisse vide → stock non renseigné</small>
+    </div>
+
+    <!-- ✅ NEW: CATEGORIES (multi) -->
+    <label class="muted" for="category_ids">Catégories</label>
+    <div id="categories-wrap">
+      <div class="cat-row">
+        <select id="category_ids" multiple size="6" aria-label="Choisir les catégories (multi)">
+          <!-- rempli en JS -->
+        </select>
+        <div class="cat-actions">
+          <button type="button" id="btn-cat-toggle" class="secondary">+ Catégorie</button>
+          <small class="muted" style="display:block;margin-top:6px;">
+            Multi-sélection : Ctrl/Cmd + clic • ou utilise les chips ci-dessous.
+          </small>
+        </div>
+      </div>
+
+      <!-- Chips sélection -->
+      <div id="category-chips" class="cat-chips" aria-live="polite"></div>
+
+      <!-- Mini panneau création -->
+      <div id="cat-create" class="cat-create" style="display:none;">
+        <div class="cat-create-grid">
+          <label class="muted" for="cat_name">Nom</label>
+          <input id="cat_name" placeholder="Ex: T-Shirts" />
+
+          <label class="muted" for="cat_slug">Slug</label>
+          <input id="cat_slug" placeholder="Ex: tshirts" />
+
+          <label class="muted" for="cat_sort">Ordre</label>
+          <input id="cat_sort" type="number" value="0" />
+
+          <label class="muted" for="cat_active">Actif</label>
+          <select id="cat_active">
+            <option value="true" selected>Oui</option>
+            <option value="false">Non</option>
+          </select>
+
+          <div class="cat-create-buttons">
+            <button type="button" id="btn-cat-create">Créer</button>
+            <button type="button" id="btn-cat-cancel" class="secondary">Annuler</button>
+          </div>
+
+          <small id="cat-create-msg" class="muted" style="grid-column: 1 / -1;"></small>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ HOME: Sélection du moment -->
+    <label class="muted" for="is_featured">Sélection du moment (Home)</label>
+    <label class="stock-toggle">
+      <input type="checkbox" id="is_featured" />
+      Mettre ce produit en avant sur la page d’accueil
+    </label>
+
+    <label class="muted" for="featured_rank">Ordre d’affichage (Home)</label>
+    <input id="featured_rank" type="number" min="1" placeholder="1 = tout en haut (optionnel)" />
+    <small class="muted help-right">
+      Laisse vide → ordre automatique • Si tu mets un ordre, le produit sera automatiquement mis en avant.
+    </small>
+
+
+    <!-- ✅ SEO / Contenu (Mode B) -->
+    <label class="muted" for="seo_title">SEO title</label>
+    <input id="seo_title" placeholder="Titre SEO (optionnel)" />
+    <small class="muted help-right">Si vide → fallback sur le nom du produit.</small>
+
+    <label class="muted" for="seo_description">Meta description</label>
+    <textarea id="seo_description" rows="3" placeholder="Description SEO (150–160 caractères idéalement)"></textarea>
+    <small class="muted help-right">Si vide → fallback sur la description courte.</small>
+
+    <label class="muted" for="long_description">Description longue</label>
+    <textarea id="long_description" rows="6" placeholder="Texte de la fiche produit (peut contenir des retours à la ligne)"></textarea>
+    <small class="muted help-right">Affichée dans le bloc “Détails & SEO” de la fiche produit.</small>
+
+    <label class="muted" for="bullet_points">Bullet points</label>
+    <textarea id="bullet_points" rows="6" placeholder="1 ligne = 1 bullet&#10;Ex:&#10;100% coton&#10;Coupe regular&#10;Entretien 30°C"></textarea>
+    <small class="muted help-right">Si vide → la fiche produit affiche un fallback basé sur variantes.</small>
+
+    <button type="submit">Ajouter</button>
+  </form>
+
+ <div class="admin-toolbar">
+  <button type="button" id="toggle-archived" class="admin-link secondary">
+    Afficher archivés
+  </button>
+
+  <input id="product-search" class="admin-search" placeholder="Rechercher un produit (nom / description)…" />
+</div>
+
+
+  <div class="table-scroll has-pager">
+  <table class="admin-table products-table">
+
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th class="th-sort" data-sort="name">Nom <span class="sort-ind"></span></th>
+        <th class="th-sort" data-sort="price_xpf">Prix <span class="sort-ind"></span></th>
+        <th class="th-sort" data-sort="active">Statut <span class="sort-ind"></span></th>
+        <th class="th-sort" data-sort="created_at">Créé le <span class="sort-ind"></span></th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="products"></tbody>
+  </table>
+</div>
+
+  <div id="products-pager" class="pager"></div>
+
+  <script src="/js/cloudinary.js"></script>
+  <script src="js/products.js"></script>
+  <script src="/admin/js/admin-layout.js"></script>
+</body>
+</html>

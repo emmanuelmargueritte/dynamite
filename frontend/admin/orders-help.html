@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Aide — Admin Commandes | Dynamite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/admin.css?v=1">
+</head>
+<body class="admin">
+  <div id="admin-header"></div>
+
+  <h1>🆘 Aide — Page “Commandes”</h1>
+
+  <section style="max-width: 900px;">
+    <h2>But de la page</h2>
+    <p>
+      Cette page permet de consulter les commandes (lecture seule) :
+      date, quantité totale d’articles, montant, statut, et détail des produits.
+    </p>
+
+    <h2>Fonctions principales</h2>
+
+    <h3>1) Recherche</h3>
+    <ul>
+      <li><strong>Champ “Recherche”</strong> : permet de retrouver une commande via :</li>
+      <ul>
+        <li><strong>ID commande</strong> (ex: 123)</li>
+        <li><strong>session_id</strong> (ex: session serveur)</li>
+        <li><strong>Stripe session id</strong></li>
+        <li><strong>Stripe payment intent id</strong></li>
+      </ul>
+      <li>Un <strong>menu déroulant</strong> suggère des valeurs (historique + suggestions).</li>
+      <li><strong>Entrée</strong> lance la recherche immédiatement.</li>
+      <li><strong>Échap</strong> efface la recherche quand le champ est sélectionné.</li>
+    </ul>
+
+    <h3>2) Filtre Statut</h3>
+    <ul>
+      <li><strong>Tous</strong> : affiche toutes les commandes</li>
+      <li><strong>PAID</strong> : commandes payées</li>
+      <li><strong>PENDING</strong> : commandes en attente</li>
+    </ul>
+
+    <h3>3) Tri</h3>
+    <ul>
+      <li>Cliquer sur <strong>Date</strong> ou <strong>Montant</strong> trie la liste.</li>
+      <li>Un second clic inverse le sens (ascendant/descendant).</li>
+    </ul>
+
+    <h3>4) Pagination</h3>
+    <ul>
+      <li>Boutons <strong>←</strong> et <strong>→</strong> en bas de page pour passer d’une page à l’autre.</li>
+      <li>Le texte <strong>Page X</strong> indique la page actuelle.</li>
+    </ul>
+
+    <h3>5) Actions sur une commande</h3>
+    <ul>
+      <li><strong>Copier ID</strong> : copie l’ID de la commande dans le presse-papiers.</li>
+      <li><strong>Aperçu</strong> : ouvre un panneau contenant le détail (produits, quantités, prix).</li>
+      <li><strong>Voir</strong> : ouvre la page complète de la commande.</li>
+      <li><strong>Clic sur une ligne</strong> : ouvre aussi l’aperçu (sauf si on clique sur un bouton/lien).</li>
+    </ul>
+
+    <h3>6) Export CSV</h3>
+    <ul>
+      <li>Le bouton <strong>Export CSV</strong> télécharge un fichier CSV des commandes.</li>
+      <li>L’export tient compte des <strong>filtres</strong> (statut, recherche).</li>
+    </ul>
+
+    <h2>Raccourcis clavier</h2>
+    <ul>
+      <li><strong>/</strong> : focus sur le champ Recherche</li>
+      <li><strong>Entrée</strong> : lancer la recherche (si focus sur Recherche)</li>
+      <li><strong>Échap</strong> : effacer la recherche (si focus sur Recherche)</li>
+      <li><strong>Alt + ← / Alt + →</strong> : page précédente / suivante</li>
+      <li><strong>d</strong> : tri Date</li>
+      <li><strong>m</strong> : tri Montant</li>
+    </ul>
+
+    <h2>Détail commande (page dédiée)</h2>
+    <p>
+      La page détail affiche la liste des produits de la commande.
+      Des boutons permettent de copier :
+      <strong>Order ID</strong>, <strong>Session ID</strong>, <strong>Stripe Session</strong>, <strong>Payment Intent</strong>.
+    </p>
+
+    <p class="muted" style="margin-top:18px;">
+      Note : l’administration est en lecture seule pour les commandes (pas de modification/annulation depuis cette interface).
+    </p>
+
+    <p style="margin-top:18px;">
+      <a class="admin-link" href="/admin/orders.html">← Retour aux commandes</a>
+    </p>
+  </section>
+
+  <script src="/admin/js/admin-layout.js"></script>
+</body>
+</html>

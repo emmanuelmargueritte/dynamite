@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Contact — Dynamite</title>
+  <meta name="description" content="Contactez la boutique Dynamite à Nouméa." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<div id="site-header"></div>
+
+<main>
+  <section>
+    <h2>Magasin</h2>
+    <p><strong>Dynamite</strong></p>
+    <p><strong>Adresse :</strong> 42 Rue Georges CLEMENCEAU. 98800 NOUMEA</p>
+    <p class="small">Nouvelle-Calédonie</p>
+  </section>
+
+  <section>
+    <h2>Nous écrire</h2>
+    <p class="small">
+      Ce formulaire est informatif côté frontend. Pour une mise en production, relier à un endpoint backend (non requis pour le checkout).
+    </p>
+
+    <form onsubmit="event.preventDefault(); alert('Message enregistré côté navigateur (démo).');">
+      <div class="formRow">
+        <div>
+          <label for="name">Nom</label>
+          <input id="name" type="text" autocomplete="name" />
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input id="email" type="email" autocomplete="email" />
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <label for="msg">Message</label>
+        <textarea id="msg"></textarea>
+      </div>
+
+      <div style="margin-top:12px;">
+        <button type="submit">Envoyer</button>
+      </div>
+    </form>
+  </section>
+</main>
+
+<footer>
+  <nav class="legal-links" aria-label="Navigation légale">
+    <a href="cgv.html">CGV</a>
+    <a href="mentions-legales.html">Mentions légales</a>
+    <a href="politique-confidentialite.html">Confidentialité</a>
+    <a href="politique-cookies.html">Cookies</a>
+  </nav>
+  <p>© Dynamite</p>
+</footer>
+<script src="/js/site-header.js"></script>
+<script src="js/cookies.js"></script>
+
+
+</body>
+</html>
