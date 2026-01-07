@@ -60,7 +60,8 @@ if (env.NODE_ENV === 'production') {
    🪵 LOGS / SÉCURITÉ GLOBALE
    ========================================================= */
 app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
+
 app.use(securityHeaders);
 
 app.use(cors({
