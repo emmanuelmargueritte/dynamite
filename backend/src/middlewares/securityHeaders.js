@@ -1,13 +1,28 @@
+// backend/src/middlewares/securityHeaders.js
 const helmet = require('helmet');
 const { env } = require('../utils/env');
 
+const isProd = env.NODE_ENV === 'production';
+
+// ✅ Phase 2 (audit) : CSP en REPORT-ONLY pour ne rien casser.
+// Quand tout est validé, on pourra passer reportOnly:false (en vrai prod).
+const CSP_REPORT_ONLY = true;
+
+// En dev, on tolère localhost pour certains cas (hot reload / outils)
+const devConnectSrc = isProd ? [] : [
+  'http://localhost:3000',
+  'http://localhost:8080'
+];
+
 module.exports = helmet({
   referrerPolicy: { policy: 'no-referrer-when-downgrade' },
-  frameguard: { action: 'sameorigin' },
+  frameguard: { action: 'sameorigin' }, // protège TES pages d'être iframées ailleurs (ok avec Stripe)
   noSniff: true,
   xssFilter: false,
+
   contentSecurityPolicy: {
     useDefaults: true,
+    reportOnly: CSP_REPORT_ONLY,
     directives: {
       "default-src": ["'self'"],
       "base-uri": ["'self'"],
@@ -22,36 +37,45 @@ module.exports = helmet({
         "https://res.cloudinary.com"
       ],
 
-      // 🎨 Styles
+      // 🎨 Styles (tu as du style inline dans l’admin => on garde sans refacto)
       "style-src": [
         "'self'",
         "'unsafe-inline'"
       ],
 
-      // 📜 Scripts
+      // 📜 Scripts (Stripe Checkout)
       "script-src": [
-        "'self'"
+        "'self'",
+        "https://js.stripe.com"
       ],
 
       // 🔌 API calls (Stripe + Cloudinary upload)
       "connect-src": [
         "'self'",
-        "http://localhost:3000",
-        "http://localhost:8080",
+        ...devConnectSrc,
         "https://api.stripe.com",
+        "https://checkout.stripe.com",
+        "https://hooks.stripe.com",
+        "https://*.stripe.com",
         "https://api.cloudinary.com"
       ],
 
       // 💳 Iframes Stripe
       "frame-src": [
         "'self'",
-        "https://js.stripe.com"
+        "https://js.stripe.com",
+        "https://hooks.stripe.com",
+        "https://checkout.stripe.com"
       ],
 
-      // 📨 Formulaires
-      "form-action": [
-        "'self'"
-      ]
+      // 🔤 Fonts (safe)
+      "font-src": [
+        "'self'",
+        "data:"
+      ],
+
+      // 📨 Formulaires (empêche post vers ailleurs)
+      "form-action": ["'self'"]
     }
   }
 });
