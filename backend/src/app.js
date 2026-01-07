@@ -172,7 +172,7 @@ app.post(
    ========================================================= */
 app.use(
   express.static(path.join(__dirname, '../../frontend'), {
-    maxAge: 0, // on gère via setHeaders
+    maxAge: 0, // géré via setHeaders
     setHeaders: (res, filePath) => {
       // ✅ HTML: jamais en cache
       if (filePath.endsWith('.html')) {
@@ -180,7 +180,16 @@ app.use(
         return;
       }
 
-      // ✅ Assets: cache seulement en prod
+      // ✅ ADMIN (JS/CSS) : pas de cache -> évite les vieux scripts
+      const isAdminFile = filePath.includes(`${path.sep}admin${path.sep}`);
+      const isJsOrCss = filePath.endsWith('.js') || filePath.endsWith('.css');
+
+      if (isAdminFile && isJsOrCss) {
+        res.setHeader('Cache-Control', 'no-store');
+        return;
+      }
+
+      // ✅ Public assets: cache en prod, sinon pas de cache
       if (env.NODE_ENV === 'production') {
         res.setHeader('Cache-Control', 'public, max-age=86400');
       } else {

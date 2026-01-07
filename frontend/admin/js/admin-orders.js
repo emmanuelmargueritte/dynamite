@@ -269,20 +269,28 @@
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>
-            <img
-              src="${escapeHtml(imgSrc)}"
-              alt="${escapeHtml(it.product_name || 'Produit')}"
-              class="preview-thumb"
-              onerror="this.src='${fallbackImg}'"
-            />
-          </td>
-          <td>${escapeHtml(it.product_name || '—')}</td>
-          <td>${escapeHtml(it.quantity)}</td>
-          <td>${escapeHtml(it.unit_price_xpf)} XPF</td>
-          <td>${escapeHtml(it.total_xpf)} XPF</td>
-        `;
-        previewItems.appendChild(tr);
+  <td>
+    <img
+      src="${escapeHtml(imgSrc)}"
+      alt="${escapeHtml(it.product_name || 'Produit')}"
+      class="preview-thumb"
+    />
+  </td>
+  <td>${escapeHtml(it.product_name || '—')}</td>
+  <td>${escapeHtml(it.quantity)}</td>
+  <td>${escapeHtml(it.unit_price_xpf)} XPF</td>
+  <td>${escapeHtml(it.total_xpf)} XPF</td>
+`;
+
+const imgEl = tr.querySelector('img.preview-thumb');
+if (imgEl) {
+  imgEl.addEventListener('error', () => {
+    imgEl.src = fallbackImg;
+  }, { once: true });
+}
+
+previewItems.appendChild(tr);
+
       }
     } catch (e) {
       console.error(e);

@@ -4,11 +4,12 @@ const { env } = require('../utils/env');
 
 const isProd = env.NODE_ENV === 'production';
 
-// ✅ Phase 2 (audit) : CSP en REPORT-ONLY pour ne rien casser.
-
-const CSP_REPORT_ONLY = true;
-
-
+// ✅ CSP_MODE:
+// - "audit"   => Report-Only (ne bloque rien)
+// - "enforce" => Enforce (bloque)
+// Par défaut : prod=enforce, dev=audit
+const CSP_MODE = String(process.env.CSP_MODE || (isProd ? 'enforce' : 'audit')).toLowerCase();
+const CSP_REPORT_ONLY = CSP_MODE !== 'enforce';
 
 // En dev, on tolère localhost pour certains cas (hot reload / outils)
 const devConnectSrc = isProd ? [] : [

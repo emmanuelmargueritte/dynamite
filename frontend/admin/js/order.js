@@ -1,3 +1,4 @@
+// frontend/admin/js/order.js
 (async () => {
   const itemsTbody = document.getElementById('orderItems');
   const meta = document.getElementById('orderMeta');
@@ -64,8 +65,8 @@
   }
 
   if (!id) {
-    meta.textContent = 'ID commande manquant.';
-    itemsTbody.innerHTML = `<tr><td colspan="5" class="error">Commande introuvable</td></tr>`;
+    if (meta) meta.textContent = 'ID commande manquant.';
+    if (itemsTbody) itemsTbody.innerHTML = `<tr><td colspan="5" class="error">Commande introuvable</td></tr>`;
     return;
   }
 
@@ -80,9 +81,11 @@
     const order = data.order;
     const items = data.items || [];
 
-    meta.textContent =
-      `Commande #${order.id} — ${order.amount_xpf} XPF — ${(order.status || '').toUpperCase()} — ` +
-      `${new Date(order.created_at).toLocaleString('fr-FR')}`;
+    if (meta) {
+      meta.textContent =
+        `Commande #${order.id} — ${order.amount_xpf} XPF — ${(order.status || '').toUpperCase()} — ` +
+        `${new Date(order.created_at).toLocaleString('fr-FR')}`;
+    }
 
     // barre copy
     if (bar) {
@@ -100,6 +103,8 @@
       });
     }
 
+    if (!itemsTbody) return;
+
     itemsTbody.innerHTML = '';
 
     if (!items.length) {
@@ -111,13 +116,13 @@
       const tr = document.createElement('tr');
       const imgSrc = it.image_url || fallbackImg;
 
+      // ✅ plus de onerror inline (bloqué par CSP)
       tr.innerHTML = `
         <td>
           <img
             src="${escapeHtml(imgSrc)}"
             alt="${escapeHtml(it.product_name || 'Produit')}"
             style="width:50px;height:50px;object-fit:cover;border-radius:8px;"
-            onerror="this.src='${fallbackImg}'"
           />
         </td>
         <td>${escapeHtml(it.product_name || '—')}</td>
@@ -126,11 +131,19 @@
         <td>${escapeHtml(it.total_xpf)} XPF</td>
       `;
 
+      // ✅ fallback image via JS (autorisé CSP)
+      const img = tr.querySelector('img');
+      if (img) {
+        img.addEventListener('error', () => {
+          img.src = fallbackImg;
+        }, { once: true });
+      }
+
       itemsTbody.appendChild(tr);
     }
   } catch (err) {
     console.error(err);
-    meta.textContent = 'Erreur lors du chargement.';
-    itemsTbody.innerHTML = `<tr><td colspan="5" class="error">Erreur chargement commande</td></tr>`;
+    if (meta) meta.textContent = 'Erreur lors du chargement.';
+    if (itemsTbody) itemsTbody.innerHTML = `<tr><td colspan="5" class="error">Erreur chargement commande</td></tr>`;
   }
 })();
