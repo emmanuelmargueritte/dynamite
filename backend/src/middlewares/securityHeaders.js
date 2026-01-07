@@ -6,7 +6,8 @@ const isProd = env.NODE_ENV === 'production';
 
 // ✅ Phase 2 (audit) : CSP en REPORT-ONLY pour ne rien casser.
 
-const CSP_REPORT_ONLY = !isProd; // dev = report-only, prod = enforce
+const CSP_REPORT_ONLY = true;
+
 
 
 // En dev, on tolère localhost pour certains cas (hot reload / outils)
