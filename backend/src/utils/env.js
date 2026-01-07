@@ -1,5 +1,5 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
-console.log('ENV CHECK STRIPE TEST =', process.env.STRIPE_SECRET_KEY_TEST);
+
 
 
 const toBool = (v, def = false) => {

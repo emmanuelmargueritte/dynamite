@@ -1,4 +1,35 @@
 (async () => {
+  // ✅ Guard global: si pas connecté => redirection login (évite listes vides après logout)
+  async function requireAdminSession() {
+    // Sécurité si jamais ce script était inclus sur login
+    if (window.location.pathname.includes('/admin/login')) return true;
+
+    try {
+      const res = await fetch('/api/admin/auth/me', {
+        credentials: 'include'
+      });
+
+      if (!res.ok) {
+        window.location.href = '/admin/login.html';
+        return false;
+      }
+
+      const data = await res.json().catch(() => ({}));
+      if (!data || !data.id) {
+        window.location.href = '/admin/login.html';
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      window.location.href = '/admin/login.html';
+      return false;
+    }
+  }
+
+  const ok = await requireAdminSession();
+  if (!ok) return;
+
   try {
     const res = await fetch('/admin/partials/admin-header.html', {
       credentials: 'include'

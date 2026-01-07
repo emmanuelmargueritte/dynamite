@@ -2,7 +2,6 @@
  * Point d’entrée du serveur HTTP
  */
 require('dotenv').config();
-console.log(process.env.STRIPE_SECRET_KEY);
 const http = require('http');
 const app = require('./src/app');
 const { env } = require('./src/utils/env');

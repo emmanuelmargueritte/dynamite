@@ -1,5 +1,3 @@
-console.log('CLOUDINARY CHECK', process.env.CLOUDINARY_CLOUD_NAME);
-
 /**
  * Configuration Express principale
  */
@@ -52,7 +50,11 @@ const ssrRoutes = require('./routes/ssr.routes');
 const settingsRoutes = require('./routes/settings.routes');
 
 const app = express();
-app.set('trust proxy', 1);
+
+if (env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 
 /* =========================================================
    🪵 LOGS / SÉCURITÉ GLOBALE
