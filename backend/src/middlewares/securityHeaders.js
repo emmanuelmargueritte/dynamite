@@ -5,8 +5,9 @@ const { env } = require('../utils/env');
 const isProd = env.NODE_ENV === 'production';
 
 // ✅ Phase 2 (audit) : CSP en REPORT-ONLY pour ne rien casser.
-// Quand tout est validé, on pourra passer reportOnly:false (en vrai prod).
-const CSP_REPORT_ONLY = true;
+
+const CSP_REPORT_ONLY = !isProd; // dev = report-only, prod = enforce
+
 
 // En dev, on tolère localhost pour certains cas (hot reload / outils)
 const devConnectSrc = isProd ? [] : [
@@ -75,7 +76,10 @@ module.exports = helmet({
       ],
 
       // 📨 Formulaires (empêche post vers ailleurs)
-      "form-action": ["'self'"]
+      "form-action": ["'self'"],
+
+      // ✅ permet aux navigateurs de reporter les violations (Report-Only)
+      "report-uri": ["/api/csp-report"]
     }
   }
 });

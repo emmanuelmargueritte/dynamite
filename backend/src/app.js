@@ -60,8 +60,11 @@ if (env.NODE_ENV === 'production') {
    🪵 LOGS / SÉCURITÉ GLOBALE
    ========================================================= */
 app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
+// ✅ on désactive la CSP par défaut de helmet (sinon double CSP -> Cloudinary bloqué)
 app.use(helmet({ contentSecurityPolicy: false }));
 
+// ✅ notre CSP (report-only) + headers
 app.use(securityHeaders);
 
 app.use(cors({
@@ -69,7 +72,7 @@ app.use(cors({
   credentials: true
 }));
 
-// ✅ NEW: compression HTTP (avant les routes)
+// ✅ compression HTTP
 app.use(compression());
 
 /* =========================================================
@@ -112,11 +115,7 @@ app.use(ssrRoutes);
    🔓 ROUTES PUBLIQUES API
    ========================================================= */
 app.use('/api/public', publicRoutes);
-
-// public categories (liste des catégories en haut du shop)
 app.use('/api/public/categories', publicCategoriesRoutes);
-
-// ✅ NEW: public settings
 app.use('/api/public/settings', settingsRoutes);
 
 app.use('/api/products', productRoutes);
@@ -143,13 +142,8 @@ app.use(
    ========================================================= */
 app.use('/api/admin/products', requireAdmin, adminProductsRoutes);
 app.use('/api/admin/orders', requireAdmin, adminOrdersRoutes);
-
-// admin categories (CRUD)
 app.use('/api/admin/categories', requireAdmin, adminCategoriesRoutes);
-
-// ✅ NEW: admin settings
 app.use('/api/admin/settings', requireAdmin, settingsRoutes);
-
 app.use('/api/admin', requireAdmin, adminRoutes);
 
 /* =========================================================
@@ -160,13 +154,27 @@ app.get('/health', (req, res) => {
 });
 
 /* =========================================================
+   ✅ CSP reports (Report-Only) — log seulement en dev
+   ========================================================= */
+app.post(
+  '/api/csp-report',
+  express.json({ type: ['application/csp-report', 'application/json'] }),
+  (req, res) => {
+    if (env.NODE_ENV !== 'production') {
+      console.log('CSP REPORT:', JSON.stringify(req.body));
+    }
+    res.status(204).end();
+  }
+);
+
+/* =========================================================
    🖥️ FRONTEND STATIC
    ========================================================= */
 app.use(
   express.static(path.join(__dirname, '../../frontend'), {
     maxAge: 0, // on gère via setHeaders
     setHeaders: (res, filePath) => {
-      // ✅ HTML: jamais en cache (dev + prod)
+      // ✅ HTML: jamais en cache
       if (filePath.endsWith('.html')) {
         res.setHeader('Cache-Control', 'no-store');
         return;
@@ -201,6 +209,5 @@ app.get('*', (req, res, next) => {
    ❗ ERROR HANDLER — TOUJOURS EN DERNIER
    ========================================================= */
 app.use(errorHandler);
-
 
 module.exports = app;
