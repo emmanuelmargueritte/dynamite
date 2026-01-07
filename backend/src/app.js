@@ -163,7 +163,21 @@ app.get('/health', (req, res) => {
    ========================================================= */
 app.use(
   express.static(path.join(__dirname, '../../frontend'), {
-    maxAge: env.NODE_ENV === 'production' ? '1d' : 0
+    maxAge: 0, // on gère via setHeaders
+    setHeaders: (res, filePath) => {
+      // ✅ HTML: jamais en cache (dev + prod)
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-store');
+        return;
+      }
+
+      // ✅ Assets: cache seulement en prod
+      if (env.NODE_ENV === 'production') {
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+      } else {
+        res.setHeader('Cache-Control', 'public, max-age=0');
+      }
+    }
   })
 );
 
@@ -187,11 +201,5 @@ app.get('*', (req, res, next) => {
    ========================================================= */
 app.use(errorHandler);
 
-/* =========================================================
-   🚀 SERVER
-   ========================================================= */
-app.listen(env.PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${env.PORT}`);
-});
 
 module.exports = app;
