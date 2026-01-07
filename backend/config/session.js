@@ -27,7 +27,8 @@ module.exports = function createSessionMiddleware(pool) {
     cookie: {
       httpOnly: true,
       sameSite: 'lax',
-      secure: isProd, // ✅ prod: true / local: false
+      secure: isProd ? 'auto' : false,
+
       maxAge: 24 * 60 * 60 * 1000 // 24h
     }
   });
