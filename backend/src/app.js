@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
+const compression = require('compression'); // ✅ NEW
 
 const requireAdmin = require('./middlewares/requireAdmin');
 
@@ -55,7 +56,6 @@ if (env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
 }
 
-
 /* =========================================================
    🪵 LOGS / SÉCURITÉ GLOBALE
    ========================================================= */
@@ -67,6 +67,9 @@ app.use(cors({
   origin: env.PUBLIC_BASE_URL,
   credentials: true
 }));
+
+// ✅ NEW: compression HTTP (avant les routes)
+app.use(compression());
 
 /* =========================================================
    ⚠️ STRIPE WEBHOOK — RAW BODY OBLIGATOIRE
