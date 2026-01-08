@@ -1,6 +1,7 @@
 const Stripe = require('stripe');
 const { env } = require('../utils/env');
 const { pool } = require('../utils/db');
+const sendOrderConfirmation = require('../mail/sendOrderConfirmation');
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: '2023-10-16'
@@ -16,7 +17,11 @@ module.exports = async function stripeWebhookHandler(req, res) {
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, env.STRIPE_WEBHOOK_SECRET);
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      env.STRIPE_WEBHOOK_SECRET
+    );
   } catch (err) {
     console.error('❌ Stripe signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -28,14 +33,13 @@ module.exports = async function stripeWebhookHandler(req, res) {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
 
-      const stripeSessionId = session.id; // cs_test_...
-      const paymentIntentId = session.payment_intent || null; // pi_...
-      const orderId = session?.metadata?.order_id || null; // ✅ source de vérité
+      const stripeSessionId = session.id;
+      const paymentIntentId = session.payment_intent || null;
+      const orderId = session?.metadata?.order_id || null;
 
       let result;
 
       if (orderId) {
-        // ✅ Update par order_id (robuste même si stripe_session_id a été régénéré)
         result = await pool.query(
           `
           UPDATE orders
@@ -49,7 +53,6 @@ module.exports = async function stripeWebhookHandler(req, res) {
           [orderId, paymentIntentId, stripeSessionId]
         );
       } else {
-        // 🔁 Fallback (compat anciens paiements sans metadata)
         result = await pool.query(
           `
           UPDATE orders
@@ -72,6 +75,14 @@ module.exports = async function stripeWebhookHandler(req, res) {
         'rowCount=',
         result.rowCount
       );
+
+      // ✅ ENVOI EMAIL CONFIRMATION (UNE SEULE FOIS)
+      if (result.rowCount === 1 && session.customer_details?.email) {
+        await sendOrderConfirmation({
+          to: session.customer_details.email,
+          orderId: orderId || stripeSessionId,
+        });
+      }
     }
 
     return res.json({ received: true });
