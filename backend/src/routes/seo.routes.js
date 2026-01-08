@@ -111,14 +111,13 @@ router.get('/robots.txt', asyncHandler(async (req, res) => {
   const base = getBaseUrl(req);
 
   const lines = [
-    'User-agent: *',
-    'Allow: /',
-    'Disallow: /admin/',
-    'Disallow: /api/',
-    'Disallow: /cart.html',
-    'Disallow: /success.html',
-    `Sitemap: ${base}/sitemap.xml`
-  ];
+  'User-agent: *',
+  'Disallow: /admin/',
+  'Disallow: /api/',
+  'Disallow: /cart',
+  'Disallow: /checkout'
+];
+
 
   res.set('Content-Type', 'text/plain; charset=utf-8');
   res.send(lines.join('\n') + '\n');

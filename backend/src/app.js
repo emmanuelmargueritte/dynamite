@@ -64,7 +64,7 @@ app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 // ✅ on désactive la CSP par défaut de helmet (sinon double CSP -> Cloudinary bloqué)
 app.use(helmet({ contentSecurityPolicy: false }));
 
-// ✅ notre CSP (report-only) + headers
+// ✅ notre CSP + headers
 app.use(securityHeaders);
 
 app.use(cors({
@@ -97,11 +97,6 @@ app.use(cookieParser());
 app.use(createSessionMiddleware(pool));
 
 /* =========================================================
-   🚦 RATE LIMITING (APRÈS SESSION)
-   ========================================================= */
-app.use(rateLimit);
-
-/* =========================================================
    🤖 SEO (robots/sitemap/redirects canon)
    ========================================================= */
 app.use(seoRoutes);
@@ -118,21 +113,25 @@ app.use('/api/public', publicRoutes);
 app.use('/api/public/categories', publicCategoriesRoutes);
 app.use('/api/public/settings', settingsRoutes);
 
-app.use('/api/products', productRoutes);
-app.use('/api/auth', authRoutes);
+/* =========================================================
+   🔐 AUTH (RATE LIMIT CIBLÉ)
+   ========================================================= */
+app.use('/api/auth', rateLimit, authRoutes);
 
 /* =========================================================
    🛒 PANIER & COMMANDES
    ========================================================= */
+app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/checkout', checkoutRoutes);
 app.use('/api/orders', orderRoutes);
 
 /* =========================================================
-   🔐 ADMIN AUTH (login / logout / me)
+   🔐 ADMIN AUTH (login / logout / me) — RATE LIMIT + CSRF
    ========================================================= */
 app.use(
   '/api/admin/auth',
+  rateLimit,
   adminCsrfProtection,
   adminAuthRoutes
 );
@@ -154,33 +153,17 @@ app.get('/health', (req, res) => {
 });
 
 /* =========================================================
-   ✅ CSP reports (Report-Only) — log seulement en dev
-   ========================================================= */
-app.post(
-  '/api/csp-report',
-  express.json({ type: ['application/csp-report', 'application/json'] }),
-  (req, res) => {
-    if (env.NODE_ENV !== 'production') {
-      console.log('CSP REPORT:', JSON.stringify(req.body));
-    }
-    res.status(204).end();
-  }
-);
-
-/* =========================================================
    🖥️ FRONTEND STATIC
    ========================================================= */
 app.use(
   express.static(path.join(__dirname, '../../frontend'), {
-    maxAge: 0, // géré via setHeaders
+    maxAge: 0,
     setHeaders: (res, filePath) => {
-      // ✅ HTML: jamais en cache
       if (filePath.endsWith('.html')) {
         res.setHeader('Cache-Control', 'no-store');
         return;
       }
 
-      // ✅ ADMIN (JS/CSS) : pas de cache -> évite les vieux scripts
       const isAdminFile = filePath.includes(`${path.sep}admin${path.sep}`);
       const isJsOrCss = filePath.endsWith('.js') || filePath.endsWith('.css');
 
@@ -189,7 +172,6 @@ app.use(
         return;
       }
 
-      // ✅ Public assets: cache en prod, sinon pas de cache
       if (env.NODE_ENV === 'production') {
         res.setHeader('Cache-Control', 'public, max-age=86400');
       } else {

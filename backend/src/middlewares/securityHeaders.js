@@ -18,8 +18,20 @@ const devConnectSrc = isProd ? [] : [
 ];
 
 module.exports = helmet({
-  referrerPolicy: { policy: 'no-referrer-when-downgrade' },
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+
   frameguard: { action: 'sameorigin' }, // protège TES pages d'être iframées ailleurs (ok avec Stripe)
+
+permissionsPolicy: {
+  features: {
+    geolocation: [],
+    camera: [],
+    microphone: [],
+    payment: [],
+    fullscreen: ['self']
+  }
+},
+
   noSniff: true,
   xssFilter: false,
 
@@ -27,61 +39,42 @@ module.exports = helmet({
     useDefaults: true,
     reportOnly: CSP_REPORT_ONLY,
     directives: {
-      "default-src": ["'self'"],
-      "base-uri": ["'self'"],
-      "object-src": ["'none'"],
-      "frame-ancestors": ["'self'"],
+  "default-src": ["'self'"],
 
-      // 🖼️ Images (Cloudinary + data/blob)
-      "img-src": [
-        "'self'",
-        "data:",
-        "blob:",
-        "https://res.cloudinary.com"
-      ],
+  "base-uri": ["'self'"],
+  "object-src": ["'none'"],
 
-      // 🎨 Styles (tu as du style inline dans l’admin => on garde sans refacto)
-      "style-src": [
-        "'self'",
-        "'unsafe-inline'"
-      ],
+  "frame-ancestors": ["'self'"],
 
-      // 📜 Scripts (Stripe Checkout)
-      "script-src": [
-        "'self'",
-        "https://js.stripe.com"
-      ],
+  "script-src": [
+    "'self'"
+  ],
 
-      // 🔌 API calls (Stripe + Cloudinary upload)
-      "connect-src": [
-        "'self'",
-        ...devConnectSrc,
-        "https://api.stripe.com",
-        "https://checkout.stripe.com",
-        "https://hooks.stripe.com",
-        "https://*.stripe.com",
-        "https://api.cloudinary.com"
-      ],
+  "style-src": [
+    "'self'",
+    "'unsafe-inline'"
+  ],
 
-      // 💳 Iframes Stripe
-      "frame-src": [
-        "'self'",
-        "https://js.stripe.com",
-        "https://hooks.stripe.com",
-        "https://checkout.stripe.com"
-      ],
+  "img-src": [
+    "'self'",
+    "data:",
+    "blob:",
+    "https://res.cloudinary.com"
+  ],
 
-      // 🔤 Fonts (safe)
-      "font-src": [
-        "'self'",
-        "data:"
-      ],
+  "font-src": [
+    "'self'",
+    "data:"
+  ],
 
-      // 📨 Formulaires (empêche post vers ailleurs)
-      "form-action": ["'self'"],
+  "connect-src": [
+    "'self'"
+  ],
 
-      // ✅ permet aux navigateurs de reporter les violations (Report-Only)
-      "report-uri": ["/api/csp-report"]
-    }
+  "form-action": ["'self'"],
+
+  "report-uri": ["/api/csp-report"]
+}
+
   }
 });
