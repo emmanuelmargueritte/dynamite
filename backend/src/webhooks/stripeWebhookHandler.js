@@ -1,3 +1,5 @@
+const logEvent = require('../analytics/logEvent');
+
 const Stripe = require('stripe');
 const { env } = require('../utils/env');
 const { pool } = require('../utils/db');
@@ -77,6 +79,18 @@ module.exports = async function stripeWebhookHandler(req, res) {
         'rowCount=',
         result.rowCount
       );
+
+if (result.rowCount === 1) {
+  await logEvent({
+    eventType: "order",
+    orderId: orderId || stripeSessionId,
+    page: "/checkout/success",
+    funnelStep: "success",
+    referrer: session?.metadata?.referrer || null,
+  });
+}
+
+
 
       // ✅ ENVOI EMAIL CONFIRMATION (UNE SEULE FOIS)
       if (result.rowCount === 1 && session.customer_details?.email) {

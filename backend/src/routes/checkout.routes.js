@@ -5,6 +5,7 @@ const { env } = require('../utils/env');
 const { pool } = require('../utils/db');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../errors/AppError');
+const logEvent = require('../analytics/logEvent');
 
 const router = express.Router();
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
@@ -82,6 +83,15 @@ router.post(
         const s = await stripe.checkout.sessions.retrieve(existing.stripe_session_id);
         if (s?.url) {
           req.session.last_stripe_session_id = existing.stripe_session_id;
+
+          // 📊 ANALYTICS — checkout initié
+          await logEvent({
+            eventType: 'funnel_step',
+            funnelStep: 'checkout',
+            page: '/checkout',
+            referrer: req.get('referer') || null,
+          });
+
           return res.json({ url: s.url });
         }
 
@@ -121,6 +131,15 @@ router.post(
           );
 
           req.session.last_stripe_session_id = stripeSession.id;
+
+          // 📊 ANALYTICS — checkout initié
+          await logEvent({
+            eventType: 'funnel_step',
+            funnelStep: 'checkout',
+            page: '/checkout',
+            referrer: req.get('referer') || null,
+          });
+
           return res.json({ url: stripeSession.url });
         }
       }
@@ -177,7 +196,7 @@ router.post(
       );
       const orderId = orderRes.rows[0].id;
 
-      // Create order_items (avec variant_id)
+      // Create order_items
       for (const item of cart.items) {
         const v = variantMap.get(item.variant_id);
         await client.query(
@@ -223,6 +242,15 @@ router.post(
       await client.query('COMMIT');
 
       req.session.last_stripe_session_id = stripeSession.id;
+
+      // 📊 ANALYTICS — checkout initié
+      await logEvent({
+        eventType: 'funnel_step',
+        funnelStep: 'checkout',
+        page: '/checkout',
+        referrer: req.get('referer') || null,
+      });
+
       return res.json({ url: stripeSession.url });
     } catch (e) {
       await client.query('ROLLBACK');

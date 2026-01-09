@@ -143,6 +143,14 @@ app.use('/api/admin/products', requireAdmin, adminProductsRoutes);
 app.use('/api/admin/orders', requireAdmin, adminOrdersRoutes);
 app.use('/api/admin/categories', requireAdmin, adminCategoriesRoutes);
 app.use('/api/admin/settings', requireAdmin, settingsRoutes);
+app.use(
+  '/api/admin/analytics',
+  requireAdmin,
+  require('./routes/admin.analytics.routes')
+);
+
+
+
 app.use('/api/admin', requireAdmin, adminRoutes);
 
 /* =========================================================
