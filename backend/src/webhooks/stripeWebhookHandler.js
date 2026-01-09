@@ -2,6 +2,8 @@ const Stripe = require('stripe');
 const { env } = require('../utils/env');
 const { pool } = require('../utils/db');
 const sendOrderConfirmation = require('../mail/sendOrderConfirmation');
+const sendAdminOrderNotification = require('../mail/sendAdminOrderNotification');
+
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: '2023-10-16'
@@ -83,6 +85,13 @@ module.exports = async function stripeWebhookHandler(req, res) {
           orderId: orderId || stripeSessionId,
         });
       }
+if (result.rowCount === 1) {
+  await sendAdminOrderNotification({
+    orderId: orderId || stripeSessionId,
+    email: session.customer_details?.email || 'unknown',
+  });
+}
+
     }
 
     return res.json({ received: true });
