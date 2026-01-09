@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin — Analytics | Dynamite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/admin.css?v=1">
+</head>
+
+<body class="admin">
+
+  <div id="admin-header"></div>
+
+  <!-- Header page -->
+  <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+  <div>
+    <h1 style="margin:0;">📊 Analytics</h1>
+    <p class="muted" style="margin:6px 0 0;">
+      Données internes · temps réel · sans tracking externe
+    </p>
+  </div>
+
+  <button id="analyticsHelpBtn" class="admin-link">
+    ❓ Aide à la lecture
+  </button>
+</div>
+
+
+  <!-- KPI BUSINESS -->
+  <div style="
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap:12px;
+    margin-top:16px;
+  ">
+    <div class="card">
+      <div class="muted">💰 CA total</div>
+      <div id="stat-ca-total" class="stat-value">—</div>
+    </div>
+
+    <div class="card">
+      <div class="muted">📆 CA mois</div>
+      <div id="stat-ca-month" class="stat-value">—</div>
+    </div>
+
+    <div class="card">
+      <div class="muted">🗓️ CA 7 jours</div>
+      <div id="stat-ca-7d" class="stat-value">—</div>
+    </div>
+
+    <div class="card">
+      <div class="muted">🧮 Panier moyen</div>
+      <div id="stat-panier" class="stat-value">—</div>
+    </div>
+
+    <div class="card">
+      <div class="muted">📦 Commandes</div>
+      <div id="stat-orders" class="stat-value">—</div>
+    </div>
+
+    <div class="card">
+      <div class="muted">📈 Conversion</div>
+      <div id="stat-conversion" class="stat-value">—</div>
+    </div>
+  </div>
+
+  <!-- Tunnel + Pages vues -->
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:24px;">
+    <div class="table-scroll">
+      <h2 style="margin:0 0 8px;">🧭 Tunnel</h2>
+      <table class="admin-table">
+        <thead>
+          <tr><th>Étape</th><th>Volume</th></tr>
+        </thead>
+        <tbody id="funnel-table"></tbody>
+      </table>
+    </div>
+
+    <div class="table-scroll">
+      <h2 style="margin:0 0 8px;">📄 Pages vues</h2>
+      <table class="admin-table">
+        <thead>
+          <tr><th>Page</th><th>Vues</th></tr>
+        </thead>
+        <tbody id="pages-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Top produits -->
+  <div class="table-scroll" style="margin-top:24px;">
+    <h2 style="margin:0 0 8px;">🔝 Top produits (CA)</h2>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Produit</th>
+          <th>Qté</th>
+          <th>CA</th>
+        </tr>
+      </thead>
+      <tbody id="top-products-table"></tbody>
+    </table>
+  </div>
+<!-- 🧠 AIDE ANALYTICS -->
+<div id="analyticsHelpOverlay" class="modal-overlay hidden"></div>
+
+<aside id="analyticsHelpPanel" class="modal-panel hidden" role="dialog" aria-modal="true">
+  <div class="modal-head">
+    <div class="modal-title">🧠 Comment interpréter les analytics</div>
+    <button id="analyticsHelpClose" class="admin-link btn-link">✕</button>
+  </div>
+
+  <div class="modal-body" style="line-height:1.6;">
+    <h3>📉 Le trafic baisse</h3>
+    <ul>
+      <li>Vérifier si un produit ou une page a été supprimée</li>
+      <li>Contrôler les sources (réseaux, bouche-à-oreille)</li>
+      <li>Comparer avec la période précédente</li>
+    </ul>
+
+    <h3>📦 Les commandes baissent</h3>
+    <ul>
+      <li>Vérifier le tunnel (checkout → succès)</li>
+      <li>Tester un achat complet</li>
+      <li>Regarder si un produit clé est en rupture</li>
+    </ul>
+
+    <h3>💰 Le panier moyen baisse</h3>
+    <ul>
+      <li>Analyser les produits les plus vendus</li>
+      <li>Vérifier si des produits chers ont disparu</li>
+      <li>Proposer des bundles ou produits complémentaires</li>
+    </ul>
+
+    <h3>📈 La conversion baisse</h3>
+    <ul>
+      <li>Tester le checkout sur mobile</li>
+      <li>Vérifier Stripe et les emails de confirmation</li>
+      <li>Contrôler les frais, délais, messages de confiance</li>
+    </ul>
+
+    <p class="muted" style="margin-top:12px;">
+      👉 Astuce : toujours comparer une variation sur plusieurs jours,
+      jamais sur une seule journée.
+    </p>
+  </div>
+</aside>
+
+  <script src="/admin/js/analytics.js"></script>
+  <script src="/admin/js/admin-layout.js"></script>
+</body>
+</html>

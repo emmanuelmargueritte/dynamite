@@ -1,7 +1,6 @@
 (async () => {
-  // ✅ Guard global: si pas connecté => redirection login (évite listes vides après logout)
+  // ✅ Guard global: si pas connecté => redirection login
   async function requireAdminSession() {
-    // Sécurité si jamais ce script était inclus sur login
     if (window.location.pathname.includes('/admin/login')) return true;
 
     try {
@@ -21,7 +20,7 @@
       }
 
       return true;
-    } catch (err) {
+    } catch {
       window.location.href = '/admin/login.html';
       return false;
     }
@@ -31,6 +30,7 @@
   if (!ok) return;
 
   try {
+    // 🔹 Charger le header admin
     const res = await fetch('/admin/partials/admin-header.html', {
       credentials: 'include'
     });
@@ -39,12 +39,24 @@
 
     const html = await res.text();
     const container = document.getElementById('admin-header');
-
     if (!container) return;
 
     container.innerHTML = html;
 
-    // 🔐 Attacher le logout APRÈS injection
+    // ============================
+    // 📊 Analytics → navigation
+    // ============================
+    const analyticsBtn = document.getElementById('adminAnalytics');
+    if (analyticsBtn) {
+      analyticsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.href = '/admin/analytics.html';
+      });
+    }
+
+    // ============================
+    // 🔐 Logout
+    // ============================
     const logoutBtn = document.getElementById('adminLogout');
 
     async function getCsrfToken() {
@@ -75,13 +87,13 @@
             }
           });
         } catch (err) {
-          // On garde ton comportement "force sortie", mais on log si besoin
           console.error('Logout failed:', err);
         }
 
         window.location.href = '/admin/login.html';
       });
     }
+
   } catch (err) {
     console.error('Admin header load failed', err);
   }

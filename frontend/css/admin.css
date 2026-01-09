@@ -398,4 +398,9 @@ tr.row-preview:hover { background: rgba(0,0,0,0.03); }
   margin-bottom: 90px;
 }
 
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-top: 6px;
+}
 
