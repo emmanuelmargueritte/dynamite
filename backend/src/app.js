@@ -62,10 +62,24 @@ if (env.NODE_ENV === 'production') {
 app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // ✅ on désactive la CSP par défaut de helmet (sinon double CSP -> Cloudinary bloqué)
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "blob:",
+        "https://res.cloudinary.com"
+      ],
+      connectSrc: [
+        "'self'",
+        "https://api.cloudinary.com"
+      ],
+    },
+  })
+);
 
-// ✅ notre CSP + headers
-app.use(securityHeaders);
 
 app.use(cors({
   origin: env.PUBLIC_BASE_URL,
