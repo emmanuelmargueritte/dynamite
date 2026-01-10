@@ -6,7 +6,12 @@
     "start": "node backend/server.js"
   },
   "dependencies": {
+    "cloudinary": "^2.8.0",
+    "csv-parser": "^3.2.0",
     "dotenv": "^16.4.5",
-    "nodemailer": "^7.0.12"
+    "nodemailer": "^7.0.12",
+    "pg": "^8.16.3",
+    "stripe": "^20.1.2",
+    "xlsx": "^0.18.5"
   }
 }

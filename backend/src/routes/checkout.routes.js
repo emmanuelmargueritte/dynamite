@@ -8,7 +8,14 @@ const AppError = require('../errors/AppError');
 const logEvent = require('../analytics/logEvent');
 
 const router = express.Router();
-const stripe = new Stripe(env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
+
+/**
+ * ⚠️ UNE SEULE instance Stripe
+ * Source unique de vérité : env.STRIPE_SECRET_KEY
+ */
+const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+  apiVersion: '2023-10-16'
+});
 
 const CHECKOUT_LOCK_MS = 5000;
 
@@ -42,13 +49,19 @@ async function createStripeSessionSafe(params) {
   }
 }
 
+/**
+ * POST /api/checkout/create-session
+ */
 router.post(
   '/create-session',
   asyncHandler(async (req, res) => {
     const sessionId = req.sessionID;
     const cart = req.session.cart;
 
-    if (!sessionId) throw new AppError('SESSION_MISSING', 400, 'Session utilisateur manquante');
+    if (!sessionId) {
+      throw new AppError('SESSION_MISSING', 400, 'Session utilisateur manquante');
+    }
+
     if (!cart || !Array.isArray(cart.items) || cart.items.length === 0) {
       throw new AppError('CART_EMPTY', 400, 'Panier vide');
     }
@@ -60,11 +73,14 @@ router.post(
 
     if (lastStripeSessionId && now - lockAt < CHECKOUT_LOCK_MS) {
       const s = await stripe.checkout.sessions.retrieve(lastStripeSessionId);
-      if (s?.url) return res.json({ url: s.url });
+      if (s?.url) {
+        return res.json({ url: s.url });
+      }
     }
+
     req.session.checkout_lock_at = now;
 
-    // ✅ Idempotence DB : réutiliser la dernière commande pending de cette session si possible
+    // ✅ Réutiliser une commande pending existante si possible
     const existingOrderRes = await pool.query(
       `
       SELECT id, stripe_session_id
@@ -84,69 +100,19 @@ router.post(
         if (s?.url) {
           req.session.last_stripe_session_id = existing.stripe_session_id;
 
-          // 📊 ANALYTICS — checkout initié
           await logEvent({
             eventType: 'funnel_step',
             funnelStep: 'checkout',
             page: '/checkout',
-            referrer: req.get('referer') || null,
+            referrer: req.get('referer') || null
           });
 
           return res.json({ url: s.url });
         }
-
-        // 🔁 Fix "url null": régénérer à partir des order_items
-        const itemsRes = await pool.query(
-          `
-          SELECT oi.quantity, pv.stripe_price_id
-          FROM order_items oi
-          JOIN product_variants pv ON pv.id = oi.variant_id
-          WHERE oi.order_id = $1
-          ORDER BY pv.created_at ASC
-          `,
-          [existing.id]
-        );
-
-        if (itemsRes.rows.length) {
-          const line_items = itemsRes.rows.map(r => ({
-            price: r.stripe_price_id,
-            quantity: r.quantity
-          }));
-
-          const stripeSession = await createStripeSessionSafe({
-            mode: 'payment',
-            line_items,
-            success_url: `${env.PUBLIC_BASE_URL}/success.html?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${env.PUBLIC_BASE_URL}/cart.html`,
-            metadata: { order_id: existing.id, app: 'dynamite' }
-          });
-
-          if (!stripeSession?.id || !stripeSession?.url) {
-            throw new AppError('STRIPE_SESSION_FAILED', 502, 'Échec création session Stripe');
-          }
-
-          await pool.query(
-            `UPDATE orders SET stripe_session_id = $1, updated_at = NOW() WHERE id = $2`,
-            [stripeSession.id, existing.id]
-          );
-
-          req.session.last_stripe_session_id = stripeSession.id;
-
-          // 📊 ANALYTICS — checkout initié
-          await logEvent({
-            eventType: 'funnel_step',
-            funnelStep: 'checkout',
-            page: '/checkout',
-            referrer: req.get('referer') || null,
-          });
-
-          return res.json({ url: stripeSession.url });
-        }
       }
-      // sinon on continue vers création neuve
     }
 
-    // ✅ Validation DB: variantes actives (source de vérité)
+    // ✅ Validation DB: variantes actives
     const variantIds = cart.items.map(i => i.variant_id).filter(Boolean);
     if (variantIds.length !== cart.items.length) {
       throw new AppError('VARIANT_MISSING', 400, 'variant_id manquant dans le panier');
@@ -194,6 +160,7 @@ router.post(
         `,
         [sessionId, totalXpf]
       );
+
       const orderId = orderRes.rows[0].id;
 
       // Create order_items
@@ -219,7 +186,10 @@ router.post(
       // Stripe checkout session
       const line_items = cart.items.map(item => {
         const v = variantMap.get(item.variant_id);
-        return { price: v.stripe_price_id, quantity: item.quantity };
+        return {
+          price: v.stripe_price_id,
+          quantity: item.quantity
+        };
       });
 
       const stripeSession = await createStripeSessionSafe({
@@ -235,7 +205,12 @@ router.post(
       }
 
       await client.query(
-        `UPDATE orders SET stripe_session_id = $1, updated_at = NOW() WHERE id = $2`,
+        `
+        UPDATE orders
+        SET stripe_session_id = $1,
+            updated_at = NOW()
+        WHERE id = $2
+        `,
         [stripeSession.id, orderId]
       );
 
@@ -243,12 +218,11 @@ router.post(
 
       req.session.last_stripe_session_id = stripeSession.id;
 
-      // 📊 ANALYTICS — checkout initié
       await logEvent({
         eventType: 'funnel_step',
         funnelStep: 'checkout',
         page: '/checkout',
-        referrer: req.get('referer') || null,
+        referrer: req.get('referer') || null
       });
 
       return res.json({ url: stripeSession.url });
@@ -260,5 +234,57 @@ router.post(
     }
   })
 );
+
+/**
+ * GET /api/checkout/confirm?session_id=cs_test_...
+ * ➜ Confirme le paiement côté serveur
+ */
+router.get('/confirm', async (req, res) => {
+  const { session_id } = req.query;
+
+  if (!session_id) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'missing session_id'
+    });
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.retrieve(session_id);
+
+    if (session.payment_status !== 'paid') {
+      return res.status(400).json({
+        status: 'error',
+        message: 'payment not completed'
+      });
+    }
+
+    const result = await pool.query(
+      `
+      UPDATE orders
+      SET status = 'paid',
+          updated_at = NOW()
+      WHERE stripe_session_id = $1
+      RETURNING id
+      `,
+      [session_id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'order not found'
+      });
+    }
+
+    return res.json({ status: 'ok' });
+  } catch (err) {
+    console.error('Stripe confirm error:', err);
+    return res.status(500).json({
+      status: 'error',
+      message: 'stripe confirmation failed'
+    });
+  }
+});
 
 module.exports = router;

@@ -13,6 +13,9 @@ test-env.js
 # DB dumps / backups
 *.dump
 *.sql
+!sql/
+!sql/*.sql
+
 backups/
 
 backend/.env à conserver
