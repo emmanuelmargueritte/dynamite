@@ -12,9 +12,34 @@
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  /**
+   * 🔒 CONFIRMATION STRIPE (ÉTAPE MANQUANTE)
+   * On confirme le paiement côté serveur AVANT d'afficher la commande
+   */
+  async function confirmPayment() {
+    try {
+      const res = await fetch(`/api/checkout/confirm?session_id=${sessionId}`, {
+        credentials: 'include'
+      });
+
+      const data = await res.json();
+
+      if (data.status !== 'ok') {
+        console.error('Payment confirmation failed:', data);
+      }
+    } catch (err) {
+      console.error('Error confirming payment:', err);
+    }
+  }
+
+  /**
+   * Récupération de la commande (avec retry)
+   */
   async function fetchOrderWithRetry(retries = 6) {
     for (let i = 0; i < retries; i++) {
-      const res = await fetch(`/api/orders/by-session/${sessionId}`);
+      const res = await fetch(`/api/orders/by-session/${sessionId}`, {
+        credentials: 'include'
+      });
       const data = await res.json();
 
       if (data.status === 'ok' && data.order) {
@@ -29,6 +54,10 @@
   try {
     contentEl.innerHTML = '<p>Finalisation de votre commande…</p>';
 
+    // ✅ 1️⃣ confirmer le paiement Stripe
+    await confirmPayment();
+
+    // ✅ 2️⃣ récupérer la commande maintenant qu’elle peut être "paid"
     const order = await fetchOrderWithRetry();
 
     const itemsHtml = order.items.map(item => {
@@ -60,8 +89,11 @@
       </div>
     `;
 
-    // 🧹 Vider le panier après succès
-    await fetch('/api/cart/clear', { method: 'POST' });
+    // 🧹 3️⃣ vider le panier après succès confirmé
+    await fetch('/api/cart/clear', {
+      method: 'POST',
+      credentials: 'include'
+    });
 
   } catch (err) {
     console.error('Success page error:', err);

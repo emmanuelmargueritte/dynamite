@@ -19,3 +19,9 @@ test-env.js
 backups/
 
 backend/.env à conserver
+
+# Imports / données locales
+fournisseurs.csv
+import/
+sql/migrations.old.sql
+
