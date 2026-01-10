@@ -62,6 +62,12 @@ permissionsPolicy: {
     "https://res.cloudinary.com"
   ],
 
+"connect-src": [
+  "'self'",
+  "https://api.cloudinary.com"
+],
+
+
   "font-src": [
     "'self'",
     "data:"
