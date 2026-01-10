@@ -318,7 +318,7 @@ router.get('/products', asyncHandler(async (req, res) => {
       ), '[]'::jsonb) AS categories
 
     FROM active_products p
-    JOIN default_variant dv ON dv.product_id = p.id
+    LEFT JOIN default_variant dv ON dv.product_id = p.id
     ORDER BY p.created_at DESC
     `
   );
