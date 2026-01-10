@@ -10,8 +10,7 @@ const logEvent = require('../analytics/logEvent');
 const router = express.Router();
 
 /**
- * ⚠️ UNE SEULE instance Stripe
- * Source unique de vérité : env.STRIPE_SECRET_KEY
+ * ✅ Instance Stripe UNIQUE
  */
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: '2023-10-16'
@@ -20,7 +19,7 @@ const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
 const CHECKOUT_LOCK_MS = 5000;
 
 /**
- * Détecte l'erreur Stripe: mode "payment" + price récurrent (abonnement)
+ * Détecte l'erreur Stripe: mode "payment" + price récurrent
  */
 function isRecurringPriceInPaymentModeError(err) {
   const msg = String(err?.message || '');
@@ -32,7 +31,7 @@ function isRecurringPriceInPaymentModeError(err) {
 }
 
 /**
- * Wrapper Stripe Checkout Session create, avec garde-fou "recurring price".
+ * Wrapper Stripe Checkout Session create
  */
 async function createStripeSessionSafe(params) {
   try {
@@ -66,21 +65,19 @@ router.post(
       throw new AppError('CART_EMPTY', 400, 'Panier vide');
     }
 
-    // 🔒 anti double-clic court (session)
+    // 🔒 Anti double-clic
     const now = Date.now();
     const lockAt = req.session.checkout_lock_at || 0;
     const lastStripeSessionId = req.session.last_stripe_session_id || null;
 
     if (lastStripeSessionId && now - lockAt < CHECKOUT_LOCK_MS) {
       const s = await stripe.checkout.sessions.retrieve(lastStripeSessionId);
-      if (s?.url) {
-        return res.json({ url: s.url });
-      }
+      if (s?.url) return res.json({ url: s.url });
     }
 
     req.session.checkout_lock_at = now;
 
-    // ✅ Réutiliser une commande pending existante si possible
+    // 🔁 Réutiliser une commande pending si elle existe
     const existingOrderRes = await pool.query(
       `
       SELECT id, stripe_session_id
@@ -99,20 +96,12 @@ router.post(
         const s = await stripe.checkout.sessions.retrieve(existing.stripe_session_id);
         if (s?.url) {
           req.session.last_stripe_session_id = existing.stripe_session_id;
-
-          await logEvent({
-            eventType: 'funnel_step',
-            funnelStep: 'checkout',
-            page: '/checkout',
-            referrer: req.get('referer') || null
-          });
-
           return res.json({ url: s.url });
         }
       }
     }
 
-    // ✅ Validation DB: variantes actives
+    // ✅ Validation DB des variantes
     const variantIds = cart.items.map(i => i.variant_id).filter(Boolean);
     if (variantIds.length !== cart.items.length) {
       throw new AppError('VARIANT_MISSING', 400, 'variant_id manquant dans le panier');
@@ -135,12 +124,11 @@ router.post(
     );
 
     if (variants.length !== cart.items.length) {
-      throw new AppError('VARIANT_MISMATCH', 400, 'Une ou plusieurs variantes sont invalides');
+      throw new AppError('VARIANT_MISMATCH', 400, 'Variantes invalides');
     }
 
     const variantMap = new Map(variants.map(v => [v.variant_id, v]));
 
-    // ✅ Calcul serveur
     let totalXpf = 0;
     for (const item of cart.items) {
       const v = variantMap.get(item.variant_id);
@@ -151,7 +139,7 @@ router.post(
     try {
       await client.query('BEGIN');
 
-      // Create order
+      // Création commande
       const orderRes = await client.query(
         `
         INSERT INTO orders (session_id, amount_xpf, status)
@@ -163,7 +151,7 @@ router.post(
 
       const orderId = orderRes.rows[0].id;
 
-      // Create order_items
+      // Order items
       for (const item of cart.items) {
         const v = variantMap.get(item.variant_id);
         await client.query(
@@ -197,7 +185,10 @@ router.post(
         line_items,
         success_url: `${env.PUBLIC_BASE_URL}/success.html?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${env.PUBLIC_BASE_URL}/cart.html`,
-        metadata: { order_id: orderId, app: 'dynamite' }
+        metadata: {
+          order_id: orderId,
+          app: 'dynamite'
+        }
       });
 
       if (!stripeSession?.id || !stripeSession?.url) {
@@ -236,8 +227,8 @@ router.post(
 );
 
 /**
+ * ✅ CONFIRMATION PAIEMENT (ROBUSTE)
  * GET /api/checkout/confirm?session_id=cs_test_...
- * ➜ Confirme le paiement côté serveur
  */
 router.get('/confirm', async (req, res) => {
   const { session_id } = req.query;
@@ -250,6 +241,7 @@ router.get('/confirm', async (req, res) => {
   }
 
   try {
+    // 1️⃣ récupérer la session Stripe
     const session = await stripe.checkout.sessions.retrieve(session_id);
 
     if (session.payment_status !== 'paid') {
@@ -259,15 +251,26 @@ router.get('/confirm', async (req, res) => {
       });
     }
 
+    const orderId = session.metadata?.order_id;
+
+    if (!orderId) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'order_id missing in Stripe metadata'
+      });
+    }
+
+    // 2️⃣ update commande par ID (clé métier)
     const result = await pool.query(
       `
       UPDATE orders
       SET status = 'paid',
+          stripe_session_id = $2,
           updated_at = NOW()
-      WHERE stripe_session_id = $1
+      WHERE id = $1
       RETURNING id
       `,
-      [session_id]
+      [orderId, session_id]
     );
 
     if (result.rowCount === 0) {
