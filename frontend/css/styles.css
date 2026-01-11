@@ -1258,3 +1258,21 @@ footer{
   #shop-search-clear{ display:none !important; }
 }
 
+/* =========================================================
+   FIX MOBILE — Search bar écrasée (input trop compressé)
+   ========================================================= */
+@media (max-width: 780px){
+  /* autorise réellement l’input à se réduire proprement */
+  #shop-search-mobile{
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  /* sécurité : évite tout débordement texte interne */
+  #shop-search-mobile{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
