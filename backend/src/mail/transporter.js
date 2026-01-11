@@ -8,12 +8,7 @@ function isConfigured() {
 }
 
 async function sendMail({ to, subject, html, text }) {
-  // 🔍 DEBUG — À LAISSER TEMPORAIREMENT
-  console.log("📨 BREVO sendMail CALLED", {
-    hasKey: !!process.env.BREVO_API_KEY,
-    from: process.env.EMAIL_FROM,
-    to,
-  });
+
 
   if (!isConfigured()) return;
   if (!to) return;
