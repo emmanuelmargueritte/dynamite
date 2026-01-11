@@ -90,6 +90,12 @@ if (result.rowCount === 1) {
   });
 }
 
+console.log("📧 MAIL CHECK", {
+  rowCount: result.rowCount,
+  hasEmail: !!session.customer_details?.email,
+  orderId: orderId || stripeSessionId
+});
+
 
 
       // ✅ ENVOI EMAIL CONFIRMATION (UNE SEULE FOIS)
