@@ -435,7 +435,7 @@
   ]);
 
   const sizeRow = Ui.el("div", { class: "row", style: "justify-content:space-between; gap:10px; align-items:center;" }, [
-    Ui.el("span", { class: "badge" }, ["Taille"]),
+    Ui.el("span", { class: "badge" }, ["Taille/Pointure"]),
     Ui.el("select", { id: "size", style: "min-width:170px;" }, [])
   ]);
 
