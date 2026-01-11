@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const transporter = require("./transporter");
+const { sendMail } = require("./transporter");
 
 async function sendAdminOrderNotification({ orderId, email }) {
   const templatePath = path.join(
@@ -13,8 +13,7 @@ async function sendAdminOrderNotification({ orderId, email }) {
   html = html.replace("{{ORDER_ID}}", orderId);
   html = html.replace("{{CLIENT_EMAIL}}", email);
 
-  await transporter.sendMail({
-    from: process.env.EMAIL_FROM,
+  await sendMail({
     to: process.env.MAIL_ADMIN,
     subject: "Nouvelle commande reçue",
     text: `Nouvelle commande confirmée.\n\nCommande n° ${orderId}\nClient : ${email}`,

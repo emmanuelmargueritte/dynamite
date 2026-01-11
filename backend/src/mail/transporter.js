@@ -1,17 +1,40 @@
-require("dotenv").config();
-const nodemailer = require("nodemailer");
+const fetch = require("node-fetch");
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: process.env.SMTP_SECURE === "true",
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false, // local uniquement
-  },
-});
+function isConfigured() {
+  return (
+    process.env.BREVO_API_KEY &&
+    process.env.EMAIL_FROM
+  );
+}
 
-module.exports = transporter;
+async function sendMail({ to, subject, html, text }) {
+  if (!isConfigured()) return;
+  if (!to) return;
+
+  const payload = {
+    sender: {
+      email: process.env.EMAIL_FROM,
+      name: "Dynamite",
+    },
+    to: [{ email: to }],
+    subject,
+    htmlContent: html,
+    textContent: text,
+  };
+
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "api-key": process.env.BREVO_API_KEY,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(`Brevo error: ${error}`);
+  }
+}
+
+module.exports = { sendMail };
