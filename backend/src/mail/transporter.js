@@ -8,8 +8,6 @@ function isConfigured() {
 }
 
 async function sendMail({ to, subject, html, text }) {
-
-
   if (!isConfigured()) return;
   if (!to) return;
 
